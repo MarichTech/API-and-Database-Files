@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'dawati.co.ke',
-	'username' => 'dawatico_dawati',
-	'password' => '@dawati2016',
-	'database' => 'dawatico_dawati',
+	'hostname' => '',
+	'username' => '',
+	'password' => '',
+	'database' => '',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
