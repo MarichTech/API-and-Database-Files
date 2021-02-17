@@ -1,15 +1,12 @@
 {
-	"description": "REST Server for Dawati using the CodeIgniter framework",
-	"name": "Dawati API",
+	"description": "REST Server for Juba Express Biometric Solution",
+	"name": "Juba Express API",
 	"type": "project",
 	"authors": [
 		{
-			"name": "Collins Mundi",
-			"role": "Developer"
-		},
-		{
 			"name": "Cyrus Muchiri",
-			"role": "Developer"
+			"role": "Developer",
+		  	"email" : "cmuchiri8429@gmail.com",
 		}
 	],
 	"require": {

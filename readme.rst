@@ -1,9 +1,8 @@
 ###################
-Dawati API version 2
+JUBA EXPRESS
 ###################
 
-Dawati API is used to serve the mobile version of dawati as well as any other products that
-require to run on the core enginie of Dawati
+JUBA express API is used to serve the web version
 
 **************************
 Endpoints
@@ -47,7 +46,7 @@ Acknowledgement to devevopers
 
 :Authors:
     `Cyrus Muchiri <cmuchiri8429@gmail.com>`_,
-    `Mwaura Gitonga <mwauragitonga12@gmail.com>`_,
+
 
 
 
