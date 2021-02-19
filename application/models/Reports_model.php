@@ -98,4 +98,12 @@ class Reports_model extends CI_Model
 		return $this->db->get()->result("array");
 	}
 
+	public function donations_get(){
+
+	}
+	public function modules_get(){
+
+	}
+
+
 }
