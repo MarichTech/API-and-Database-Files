@@ -16,7 +16,7 @@ class Reports_model extends CI_Model
 	public function getClients($params)
 	{
 
-		$this->db->select("clientId,userId,name,repEmail,repMobil,clients.groupCode,groupDescription,clients.dateCreated,
+		$this->db->select("clientId,userId,name,repEmail,repMobile,clients.groupCode,groupDescription,clients.dateCreated,
 		addressLocation,descriptions");
 		$this->db->from("clients");
 		$this->db->join("user_groups", "user_groups.groupCode = clients.groupCode");
