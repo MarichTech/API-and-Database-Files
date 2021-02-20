@@ -85,6 +85,11 @@ class Reports_model extends CI_Model
 		}
 		return $this->db->get()->result("array");
 	}
+
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
 	public function getAuditTrail($params){
 		$this->db->select("action,ipAddress,actionTime,userName,groupDescription");
 		$this->db->from("audit_trail");
@@ -98,11 +103,71 @@ class Reports_model extends CI_Model
 		return $this->db->get()->result("array");
 	}
 
-	public function donations_get(){
-
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
+	public function getModules($params){
+		$this->db->select("modules.moduleId,moduleName,icon,url");
+		$this->db->from("modules");
+		$this->db->join("access_levels","access_levels.moduleId=modules.moduleId");
+		$this->db->join("user_groups","user_groups.groupCode=access_levels.groupCode");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		return $this->db->get()->result("array");
 	}
-	public function modules_get(){
 
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
+	public function getAgents($params){
+		$this->db->select("agentid,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
+		as dateRegistered, dateModified,addressLocation,gender");
+		$this->db->from("agents");
+		$this->db->join("users","users.userId = agents.userId");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		return $this->db->get()->result("array");
+	}
+
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
+	public function getAdmins($params){
+		$this->db->select("adminId,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
+		as dateRegistered, dateModified,addressLocation,gender");
+		$this->db->from("administrators");
+		$this->db->join("users","users.userId = administrators.userId");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		return $this->db->get()->result("array");
+	}
+
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
+	public function getDonations($params){
+		$this->db->select("name as ClientName,clients.clientId,dateAwarded,balance ");
+		$this->db->from("client_donations");
+		$this->db->join("clients","clients.clientId = client_donations.clientId");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		return $this->db->get()->result("array");
 	}
 
 
