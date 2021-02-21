@@ -6,14 +6,16 @@
  * @date 17th February 2020
  * @for Juba Express by SILKTECH
  * */
-include_once "Base.php";
+include_once 'Base.php';
+use App\Models\Reports_model;
 use Restserver\Libraries\REST_Controller;
 class Reports extends Base
 {
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
-		$this->load->model("Reports_model","model");
+
+		$this->load->model("Reports_model","reports");
 	}
 
 	/**
@@ -27,7 +29,7 @@ class Reports extends Base
 		);
 		/*fetch data from model*/
 
-		$result = $this->model->getClients($data);
+		$result = $this->reports->getClients($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -79,7 +81,7 @@ class Reports extends Base
 
 		);
 		/*fetch data from model*/
-		$result = $result = $this->model->getOrders($data);
+		$result = $result = $this->reports->getOrders($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -112,7 +114,7 @@ class Reports extends Base
 		/*fetch data from model
 		*/
 		/*fetch data from model*/
-		$result = $result = $this->model->getBeneficiaries($data);
+		$result = $result = $this->reports->getBeneficiaries($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -145,7 +147,7 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getStaff($data);
+		$result = $result = $this->reports->getStaff($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -178,7 +180,7 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getAuditTrail($data);
+		$result = $result = $this->reports->getAuditTrail($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -207,7 +209,7 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getAdmins($data);
+		$result = $result = $this->reports->getAdmins($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -236,7 +238,7 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getAgents($data);
+		$result = $result = $this->reports->getAgents($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -274,7 +276,7 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getDonations($data);
+		$result = $result = $this->reports->getDonations($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -287,7 +289,7 @@ class Reports extends Base
 			"user_groups.groupCode"=>$group_code,
 
 		);
-		$result = $result = $this->model->getModules($data);
+		$result = $result = $this->reports->getModules($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);

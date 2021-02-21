@@ -65,6 +65,8 @@ die('This file is used for development purposes only.');
  * @property CI_Utf8             $utf8                                Provides support for UTF-8 environments
  * @property Ispconfig           $ispconfig                           This class enables you to use the ISPConfig 3 Remote API
  * @property Boleto              $boleto                              Boleto Class
+ * * @property Reports_model       $reports                             Reports Model
+ * @property Data_model          $operations                          Data Model
  */
 class CI_Controller {
 
@@ -118,6 +120,8 @@ class CI_Controller {
  * @property CI_Xmlrpcs          $xmlrpcs                             XML-RPC server class
  * @property CI_Zip              $zip                                 Zip Compression Class
  * @property CI_Utf8             $utf8                                Provides support for UTF-8 environments
+ * @property Reports_model       $reports                             Reports Model
+ * @property Data_model          $operations                          Data Model
  */
 class CI_Model {
 

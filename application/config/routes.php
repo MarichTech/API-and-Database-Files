@@ -58,6 +58,8 @@ $route['default_controller'] = 'Base';
 /*Get Requests*/
 $route['fetch/(:any)'] = 'reports/$1';
 
+/*Post requests*/
+$route['operations/(:any)'] = 'data_operations/$1';
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

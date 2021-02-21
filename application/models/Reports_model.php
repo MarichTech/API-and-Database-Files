@@ -16,7 +16,7 @@ class Reports_model extends CI_Model
 	public function getClients($params)
 	{
 
-		$this->db->select("clientId,userId,name,repEmail,repMobil,clients.groupCode,groupDescription,clients.dateCreated,
+		$this->db->select("clientId,userId,name,repEmail,repMobile,clients.groupCode,groupDescription,clients.dateCreated,
 		addressLocation,descriptions");
 		$this->db->from("clients");
 		$this->db->join("user_groups", "user_groups.groupCode = clients.groupCode");
@@ -43,7 +43,7 @@ class Reports_model extends CI_Model
 		$this->db->join("orders_beneficiaries", "orders.orderId = orders_beneficiaries.orderId");
 		$this->db->join("beneficiary", "orders_beneficiaries.beneficiaryId = beneficiary.beneficiaryId");
 		$this->db->join("orders_agents", "orders_agents.orderId = orders.orderId", "LEFT OUTER");
-		$this->db->join("agents", "orders_agents.agentId = agents.agentId");
+		$this->db->join("agents", "orders_agents.agentId = agents.agentId","LEFT OUTER");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.donationId = orders_donations.clientDonationId");
 		foreach ($params as $key => $value) {
@@ -91,9 +91,9 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getAuditTrail($params){
-		$this->db->select("action,ipAddress,actionTime,userName,groupDescription");
+		$this->db->select("action,ipAddress,status,actionTime,audit_trail.userName,groupDescription");
 		$this->db->from("audit_trail");
-		$this->db->join("users","users.userId = audit_trail.userId");
+		$this->db->join("users","users.userName = audit_trail.userName");
 		$this->db->join("user_groups","users.groupCode = user_groups.groupCode");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
@@ -159,7 +159,7 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getDonations($params){
-		$this->db->select("name as ClientName,clients.clientId,dateAwarded,balance ");
+		$this->db->select("name as ClientName,clients.clientId,dateAwarded,balance , amountAwarded");
 		$this->db->from("client_donations");
 		$this->db->join("clients","clients.clientId = client_donations.clientId");
 		foreach ($params as $key => $value) {
