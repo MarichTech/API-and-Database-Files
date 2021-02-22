@@ -126,7 +126,7 @@ class Reports_model extends CI_Model
 	 */
 	public function getAgents($params){
 		$this->db->select("agentid,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
-		as dateRegistered, dateModified,addressLocation,gender,password as bcryptPassword");
+		as dateRegistered, dateModified,addressLocation,gender,users.passCode as bcryptPassword");
 		$this->db->from("agents");
 		$this->db->join("users","users.userId = agents.userId");
 		foreach ($params as $key => $value) {
