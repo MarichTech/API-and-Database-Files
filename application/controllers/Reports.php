@@ -6,14 +6,16 @@
  * @date 17th February 2020
  * @for Juba Express by SILKTECH
  * */
-include_once "Base.php";
+include_once 'Base.php';
+use App\Models\Reports_model;
 use Restserver\Libraries\REST_Controller;
 class Reports extends Base
 {
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
-		$this->load->model("Reports_model","model");
+
+		$this->load->model("Reports_model","reports");
 	}
 
 	/**
@@ -27,7 +29,7 @@ class Reports extends Base
 		);
 		/*fetch data from model*/
 
-		$result = $this->model->getClients($data);
+		$result = $this->reports->getClients($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -79,7 +81,7 @@ class Reports extends Base
 
 		);
 		/*fetch data from model*/
-		$result = $result = $this->model->getOrders($data);
+		$result = $result = $this->reports->getOrders($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -112,7 +114,7 @@ class Reports extends Base
 		/*fetch data from model
 		*/
 		/*fetch data from model*/
-		$result = $result = $this->model->getBeneficiaries($data);
+		$result = $result = $this->reports->getBeneficiaries($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -145,7 +147,7 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getStaff($data);
+		$result = $result = $this->reports->getStaff($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
@@ -178,7 +180,119 @@ class Reports extends Base
 
 		/*fetch data from model
 		*/
-		$result = $result = $this->model->getAuditTrail($data);
+		$result = $result = $this->reports->getAuditTrail($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function admins_get(){
+		$admin_id = $this->input->get('admin_id', TRUE);
+		$identification_number = $this->input->get('identification_number', TRUE);
+		$date_created = $this->input->get('date_registered', TRUE);
+		$gender =$this->input->get('gender', TRUE);
+		$date_created_range = $this->input->get('date_registered_range', TRUE);
+		$date_registered_from = null;
+		$date_registered_to = null;
+		if(!empty($date_created_range)){
+			$separate_dates = $this->splitDateRange($date_created_range);
+			$date_registered_from = $separate_dates[0];
+			$date_registered_to =  $separate_dates[1];
+		}
+		$data = array(
+			"adminId"=>$admin_id,
+			"gender"=>$gender,
+			"identificationNumber"=>$identification_number,
+			"dateCreated"=>$date_created,
+			"dateCreated>"=>$date_registered_from,
+			"dateCreated<"=>$date_registered_to,
+		);
+
+		/*fetch data from model
+		*/
+		$result = $result = $this->reports->getAdmins($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function agents_get(){
+		$agent_id = $this->input->get('agent_id', TRUE);
+		$identification_number = $this->input->get('identification_number', TRUE);
+		$date_created = $this->input->get('date_registered', TRUE);
+		$gender =$this->input->get('gender', TRUE);
+		$date_created_range = $this->input->get('date_registered_range', TRUE);
+		$date_registered_from = null;
+		$date_registered_to = null;
+		if(!empty($date_created_range)){
+			$separate_dates = $this->splitDateRange($date_created_range);
+			$date_registered_from = $separate_dates[0];
+			$date_registered_to =  $separate_dates[1];
+		}
+		$data = array(
+			"agentId"=>$agent_id,
+			"gender"=>$gender,
+			"identificationNumber"=>$identification_number,
+			"dateCreated"=>$date_created,
+			"dateCreated>"=>$date_registered_from,
+			"dateCreated<"=>$date_registered_to,
+		);
+
+		/*fetch data from model
+		*/
+		$result = $result = $this->reports->getAgents($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function donations_get(){
+		$client_id = $this->input->get('client_id', TRUE);
+		$date_created = $this->input->get('date', TRUE);
+		$date_created_range = $this->input->get('date_registered_range', TRUE);
+		$amount_greater_than = $this->input->get('amount_awarded_greater_than', TRUE);;
+		$amount_less_than = $this->input->get('amount_awarded_less_than', TRUE);;
+		$amount_equal_to = $this->input->get('amount_awarded_equal_to', TRUE);;
+		$balance_greater_than = $this->input->get('balance_greater_than', TRUE);;
+		$balance_equal_to = $this->input->get('balance_equal_to', TRUE);;
+		$balance_less_than = $this->input->get('balance_less_than', TRUE);;
+
+		$date_registered_from = null;
+		$date_registered_to = null;
+		if(!empty($date_created_range)){
+			$separate_dates = $this->splitDateRange($date_created_range);
+			$date_registered_from = $separate_dates[0];
+			$date_registered_to =  $separate_dates[1];
+		}
+		$data = array(
+			"client_donations.clientId"=>$client_id,
+			"dateAwarded"=>$date_created,
+			"dateAwarded>"=>$date_registered_from,
+			"dateAwarded<"=>$date_registered_to,
+			"balance >"=>$balance_greater_than,
+			"balance <"=>$balance_less_than,
+			"balance "=>$balance_equal_to,
+			"amountAwarded >"=>$amount_greater_than,
+			"amountAwarded <"=>$amount_less_than,
+			"amountAwarded "=>$amount_equal_to,
+		);
+
+		/*fetch data from model
+		*/
+		$result = $result = $this->reports->getDonations($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function modules_get(){
+		
+		$group_code = $this->input->get('group_code', TRUE);
+		$level =  $this->input->get('level_code', TRUE);
+
+
+		$data = array(
+			"user_groups.groupCode"=>$group_code,
+			"modules.level"=>$level
+
+		);
+		$result = $result = $this->reports->getModules($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
