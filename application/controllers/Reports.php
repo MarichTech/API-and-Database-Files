@@ -284,9 +284,12 @@ class Reports extends Base
 	public function modules_get(){
 		
 		$group_code = $this->input->get('group_code', TRUE);
+		$level =  $this->input->get('level_code', TRUE);
+
 
 		$data = array(
 			"user_groups.groupCode"=>$group_code,
+			"modules.level"=>$level
 
 		);
 		$result = $result = $this->reports->getModules($data);
