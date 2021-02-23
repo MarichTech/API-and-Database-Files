@@ -161,7 +161,7 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getDonations($params){
-		$this->db->select("name as ClientName,clients.clientId,dateAwarded,balance , amountAwarded");
+		$this->db->select("id,name as ClientName,clients.clientId,dateAwarded,balance ,amountAwarded");
 		$this->db->from("client_donations");
 		$this->db->join("clients","clients.clientId = client_donations.clientId");
 		foreach ($params as $key => $value) {
