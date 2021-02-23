@@ -9,6 +9,9 @@ class Base extends REST_Controller
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
+		$this->load->library("bcrypt");
+		$this->load->model("data_model", "operations");
+
 	}
 
 	/**

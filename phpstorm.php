@@ -67,6 +67,7 @@ die('This file is used for development purposes only.');
  * @property Boleto              $boleto                              Boleto Class
  * * @property Reports_model       $reports                             Reports Model
  * @property Data_model          $operations                          Data Model
+ * @property Auth_model          $auth                          Auth Model
  */
 class CI_Controller {
 

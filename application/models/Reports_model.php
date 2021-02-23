@@ -45,7 +45,7 @@ class Reports_model extends CI_Model
 		$this->db->join("orders_agents", "orders_agents.orderId = orders.orderId", "LEFT OUTER");
 		$this->db->join("agents", "orders_agents.agentId = agents.agentId","LEFT OUTER");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
-		$this->db->join("client_donations", "client_donations.donationId = orders_donations.clientDonationId");
+		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -117,7 +117,7 @@ class Reports_model extends CI_Model
 				$this->db->where("$key", $value);
 			}
 		}
-		return $this->db->get()->result("array");
+		return $this->db->get()->result();
 	}
 
 	/**
