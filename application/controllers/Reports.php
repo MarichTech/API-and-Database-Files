@@ -285,14 +285,28 @@ class Reports extends Base
 		
 		$group_code = $this->input->get('group_code', TRUE);
 		$level =  $this->input->get('level_code', TRUE);
+		$parentId =  $this->input->get('parent_id', TRUE);
 
 
 		$data = array(
 			"user_groups.groupCode"=>$group_code,
-			"modules.level"=>$level
+			"modules.level"=>$level,
+			"parentId"=>$parentId
 
 		);
 		$result = $result = $this->reports->getModules($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function userGroups_get(){
+		$result = $result = $this->reports->getUserGroups();
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function idTypes_get(){
+		$result = $result = $this->reports->getIdentificationTypes();
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);

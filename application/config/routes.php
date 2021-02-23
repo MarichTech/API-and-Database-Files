@@ -54,6 +54,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 $route['default_controller'] = 'Base';
+/*Auth*/
+$route["login"]= 'auth/login';
 
 /*Get Requests*/
 $route['fetch/(:any)'] = 'reports/$1';

@@ -18,8 +18,6 @@ class Data_operations extends Base
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
-		$this->load->model("data_model", "operations");
-		$this->load->library("bcrypt");
 	}
 
 	/*Orders*/

@@ -49,7 +49,7 @@ class Data_model extends CI_Model
 		/*Calculate and update balance in donations table*/
 		$this->db->select("balance");
 		$this->db->from("client_donations");
-		$this->db->where("donationId",$order["donationId"]);
+		$this->db->where("id",$order["donationId"]);
 		$balance_result = $this->db->get()->result("array");
 		$balance = $balance_result[0]["balance"];
 		$new_balance = $balance-$order["amount"];
@@ -58,7 +58,7 @@ class Data_model extends CI_Model
 		);
 		/*Update donations with new balance*/
 		$this->db->set("balance",$new_balance);
-		$this->db->where("donationId",$order["donationId"]);
+		$this->db->where("id",$order["donationId"]);
 		return $this->db->update("client_donations",$data);
 	}
 
