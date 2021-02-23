@@ -60,8 +60,10 @@ class Reports_model extends CI_Model
 	 */
 	public function getBeneficiaries($params)
 	{
-		$this->db->select("beneficiaryId,beneficiaryName,locationAddress,gender,email,mobile");
+		$this->db->select("beneficiaryId,beneficiaryName,locationAddress,gender,email,mobile,printId,
+		fsName as fingerPrintFileSystemName,dateTaken as fingerPrintDateCreated");
 		$this->db->from("beneficiary");
+		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT OUTER");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -125,7 +127,7 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getAgents($params){
-		$this->db->select("agentid,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
+		$this->db->select("agentid,name,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
 		as dateRegistered, dateModified,addressLocation,gender");
 		$this->db->from("agents");
 		$this->db->join("users","users.userId = agents.userId");
@@ -142,7 +144,7 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getAdmins($params){
-		$this->db->select("adminId,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
+		$this->db->select("adminId, name,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
 		as dateRegistered, dateModified,addressLocation,gender");
 		$this->db->from("administrators");
 		$this->db->join("users","users.userId = administrators.userId");
@@ -168,6 +170,21 @@ class Reports_model extends CI_Model
 			}
 		}
 		return $this->db->get()->result("array");
+	}
+
+	public function getUserGroups()
+	{
+		$this->db->select("*");
+		$this->db->from("user_groups");
+		return $this->db->get()->result();
+	}
+
+	public function getIdentificationTypes()
+	{
+
+		$this->db->select("*");
+		$this->db->from("state_identification_type");
+		return $this->db->get()->result();
 	}
 
 

@@ -299,5 +299,17 @@ class Reports extends Base
 			"result" => $result
 		], REST_Controller::HTTP_OK);
 	}
+	public function userGroups_get(){
+		$result = $result = $this->reports->getUserGroups();
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function idTypes_get(){
+		$result = $result = $this->reports->getIdentificationTypes();
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
 
 }
