@@ -77,9 +77,12 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getStaff($params){
-		$this->db->select("email,mobile,addressLocation,gender,identificationNumber,responsibilities,dateCreated 
+		$this->db->select("email,name,userName,mobile,addressLocation,gender,state_identification_type.description as idType,
+		identificationNumber,responsibilities,staff.dateCreated 
 		as dateRegistered, lastModified");
 		$this->db->from("staff");
+		$this->db->join("users","users.userId = staff.userId");
+		$this->db->join("state_identification_type","staff.stateIdentificationType = state_identification_type.id");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -127,10 +130,13 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getAgents($params){
-		$this->db->select("agentid,name,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
+		$this->db->select("agentid,name,username,email,mobile,addressLocation,gender,identificationNumber,
+		state_identification_type.description as idType,agents.dateCreated 
 		as dateRegistered, dateModified,addressLocation,gender");
 		$this->db->from("agents");
 		$this->db->join("users","users.userId = agents.userId");
+		$this->db->join("state_identification_type","agents.stateIdentificationType = state_identification_type.id");
+
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -144,10 +150,13 @@ class Reports_model extends CI_Model
 	 * @return array|array[]|object|object[]
 	 */
 	public function getAdmins($params){
-		$this->db->select("adminId, name,username,email,mobile,addressLocation,gender,identificationNumber,dateCreated 
+		$this->db->select("adminId, name,username,email,mobile,addressLocation,gender,identificationNumber,state_identification_type.description as idType,
+		dateCreated 
 		as dateRegistered, dateModified,addressLocation,gender");
 		$this->db->from("administrators");
 		$this->db->join("users","users.userId = administrators.userId");
+		$this->db->join("state_identification_type","administrators.stateIdentificationType = state_identification_type.id");
+
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
