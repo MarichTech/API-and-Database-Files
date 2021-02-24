@@ -124,7 +124,8 @@ class Data_operations extends Base
 			$user_name = $_SERVER['PHP_AUTH_USER'];
 			$this->createTrail($action,$user_name,$status);
 			$this->response([
-				"result" => "false"
+				"result" => "false",
+				"message" => "Order is probably already assigned"
 			], REST_Controller::HTTP_BAD_REQUEST);
 
 		}

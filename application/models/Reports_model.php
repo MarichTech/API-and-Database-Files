@@ -37,7 +37,7 @@ class Reports_model extends CI_Model
 	{
 		$this->db->select("orders.orderId,beneficiary.beneficiaryId,beneficiary.beneficiaryName,amount,locationExpected,
 		locationDelivered,delivery_status.statusCode,orders.dateCreated
-		,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated");
+		,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName, agents.agentId");
 		$this->db->from("orders");
 		$this->db->join("delivery_status", "orders.deliveryStatusId = delivery_status.statusCode");
 		$this->db->join("orders_beneficiaries", "orders.orderId = orders_beneficiaries.orderId");

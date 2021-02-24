@@ -205,6 +205,14 @@ class Data_model extends CI_Model
 	 */
 	public function linkOrder($data)
 	{
+
+		$this->db->select("*");
+		$this->db->from("orders_agents");
+		$this->db->where("orderId",$data["order_id"]);
+		$num_rows = $this->db->get()->num_rows();
+		if($num_rows >0){
+			return false;
+		}
 		$order_agents = array(
 			"orderId" =>$data["order_id"],
 			"agentId" =>$data["agent_id"]

@@ -72,7 +72,7 @@ class Reports extends Base
 			"dateCreated <"=>$date_created_to,
 			"dateDelivered >"=>$date_delivered_from,
 			"dateDelivered <"=>$date_delivered_to,
-			"orderId"=>$order_id,
+			"orders.orderId"=>$order_id,
 			"orders_agents.agentId"=>$agent,
 			"orders_beneficiaries.beneficiaryId"=>$beneficiary,
 			"clientDonationId"=>$donation_id,
