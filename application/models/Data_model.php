@@ -190,9 +190,48 @@ class Data_model extends CI_Model
 		return $this->db->insert("client_donations",$data);
 	}
 
+	/**
+	 * @param $data
+	 * @return bool
+	 */
 	public function insertTrail($data){
 		return $this->db->insert("audit_trail",$data);
 
+	}
+
+	/**
+	 * @param $data
+	 * @return bool
+	 */
+	public function linkOrder($data)
+	{
+		$order_agents = array(
+			"orderId" =>$data["order_id"],
+			"agentId" =>$data["agent_id"]
+
+		);
+		$this->db->insert("orders_agents",$order_agents);
+		//update dispatch data
+		$data_orders = array(
+			"dateDispatched" =>date("Y-m-d H:i:s")
+		);
+		$this->db->set("dateDispatched",$data_orders["dateDispatched"]);
+		$this->db->where("orderId",$data["order_id"]);
+		return $this->db->update("orders",$data_orders);
+	}
+
+	public function updateOrder(array $params,$orderId)
+	{
+		$update_array = array();
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$update_array[$key]=$value;
+				$this->db->set("$key", $value);
+			}
+		}
+		$this->db->where("orderId",$orderId);
+		$status = $this->db->update("orders",$update_array);
+		return $status;
 	}
 
 }

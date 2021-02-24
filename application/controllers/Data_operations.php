@@ -62,7 +62,72 @@ class Data_operations extends Base
 
 	function updateOrder_post()
 	{
+		$delivery_status = $this->input->post('delivery_status', TRUE);
+		$locationDelivered = $this->input->post('location_delivered', TRUE);
+		$dateDelivered = $this->input->post('date_delivered', TRUE);
+		$locationExpected = $this->input->post('location_expected', TRUE);
+		$amount = $this->input->post('amount', TRUE);
+		$orderId = $this->input->post('order_id', TRUE);
+		$order = array(
 
+			"deliveryStatusId" => $delivery_status,
+			"amount" => $amount,
+			"locationExpected" => $locationExpected,
+			"locationDelivered" => $locationDelivered,
+			"dateDelivered"=>$dateDelivered,
+			"lastUpdated"=>date("Y-m-d H:i:s")
+		);
+		$status = $this->operations->updateOrder($order,$orderId);
+
+		if ($status == true) {
+			$action = "Update Order";
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"status" => "true"
+			], REST_Controller::HTTP_CREATED);
+
+		} else {
+			$action = "Update Order";
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"result" => "false"
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+
+	}
+
+	function linkOrder_post(){
+		$agent_id = $this->input->post('agent_id', TRUE);
+		$order_id = $this->input->post('order_id', TRUE);
+		$data = array(
+			"order_id" => $order_id,
+			"agent_id"=>$agent_id
+		);
+		$status = $this->operations->linkOrder($data);
+		if ($status == true) {
+			$action = "Assign Order";
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"status" => "true"
+			], REST_Controller::HTTP_CREATED);
+
+		} else {
+			$action = "Assign Order";
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"result" => "false"
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
 	}
 
 
@@ -151,6 +216,10 @@ class Data_operations extends Base
 
 	}
 
+	function updateClients_post(){
+
+	}
+
 
 
 
@@ -197,6 +266,11 @@ class Data_operations extends Base
 
 	function updateDonation_post()
 	{
+
+	}
+
+
+	function syncBeneficiaries_post(){
 
 	}
 }
