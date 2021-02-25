@@ -313,20 +313,31 @@ class Reports extends Base
 	}
 
 	public function orderComparison_get(){
-		/*get attributes*/
 
+
+		$dat = date('Y-m-d');
+		$date = new DateTime($dat);
 		$client_id =$this->input->get('client_id', TRUE);
-		$data= array(
 
-			"client_donations.clientId"=>$client_id,
+		$result['delivered'] = array();
+		$result['not_delivered'] = array();
 
+		$period = $date->modify("-11 months");
+		for ($i = 0; $i < 12; $i++) {
+			$data= array(
+				"client_donations.clientId"=>$client_id,
 
-		);
-		/*fetch data from model*/
-		$delivered_orders = $result = $this->reports->orderComparison($data,"delivered");
-		$undelivered_orders = $result = $this->reports->orderComparison($data,"undelivered");
+			);
+			$instance_month = $period->format("Y-m");
+			array_push($result['delivered'],$this->reports->orderComparison($data,"delivered",$instance_month));
+			array_push($result['not_delivered'],$this->reports->orderComparison($data,"undelivered",$instance_month));
+			$period = $date->modify("+1 months");
+
+		}
+
 		$this->response([
-			"result" => $result
+			"status" => "true",
+			"result"=>$result
 		], REST_Controller::HTTP_OK);
 	}
 

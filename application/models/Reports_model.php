@@ -37,7 +37,8 @@ class Reports_model extends CI_Model
 	{
 		$this->db->select("orders.orderId,beneficiary.beneficiaryId,beneficiary.beneficiaryName,amount,locationExpected,
 		locationDelivered,delivery_status.statusCode,orders.dateCreated
-		,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName, agents.agentId");
+		,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName, agents.agentId, 
+		clients.name as clientName, clients.clientId as clientId");
 		$this->db->from("orders");
 		$this->db->join("delivery_status", "orders.deliveryStatusId = delivery_status.statusCode");
 		$this->db->join("orders_beneficiaries", "orders.orderId = orders_beneficiaries.orderId");
@@ -46,6 +47,7 @@ class Reports_model extends CI_Model
 		$this->db->join("agents", "orders_agents.agentId = agents.agentId","LEFT OUTER");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
+		$this->db->join("clients", "client_donations.clientId = clients.clientId");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -196,11 +198,31 @@ class Reports_model extends CI_Model
 		return $this->db->get()->result();
 	}
 
-	public function orderComparison(array $data)
+	public function orderComparison(array $data,$type,$instance_month)
 	{
-		$date_today = date("Y-m-d");
-		$date_year_ag = date("Y-m-d",)
-		return array();
+
+		$this->db->select("count(orders.orderId) as count");
+		$this->db->from("orders");
+		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
+		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
+
+		if($type =="delivered"){
+			$this->db->where("deliveryStatusId",1);
+			$this->db->like("dateDelivered", $instance_month);
+
+		}elseif ($type=="undelivered"){
+			$this->db->where("deliveryStatusId",2);
+			$this->db->like("dateCreated", $instance_month);
+		}
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		//$this->db->group_by("MONTH(dateCreated)");
+		$result = $this->db->get()->row();
+		return $result->count;
+
 	}
 
 
