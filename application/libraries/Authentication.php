@@ -1,6 +1,6 @@
 <?php
 
-class API_Authentication
+class Authentication
 {
 
 

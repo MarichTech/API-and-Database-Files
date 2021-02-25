@@ -196,5 +196,12 @@ class Reports_model extends CI_Model
 		return $this->db->get()->result();
 	}
 
+	public function orderComparison(array $data)
+	{
+		$date_today = date("Y-m-d");
+		$date_year_ag = date("Y-m-d",)
+		return array();
+	}
+
 
 }

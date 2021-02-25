@@ -155,7 +155,7 @@ $config['allow_auth_and_keys'] = TRUE;
 | e.g: md5('admin:REST API:1234') = '1e957ebc35631ab22d5bd6526bd14ea2'
 |
 */
-$config['auth_library_class'] = 'API_Authentication';
+$config['auth_library_class'] = 'Authentication';
 $config['auth_library_function'] = 'login';
 
 /*

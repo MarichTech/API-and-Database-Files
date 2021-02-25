@@ -312,4 +312,22 @@ class Reports extends Base
 		], REST_Controller::HTTP_OK);
 	}
 
+	public function orderComparison_get(){
+		/*get attributes*/
+
+		$client_id =$this->input->get('client_id', TRUE);
+		$data= array(
+
+			"client_donations.clientId"=>$client_id,
+
+
+		);
+		/*fetch data from model*/
+		$delivered_orders = $result = $this->reports->orderComparison($data,"delivered");
+		$undelivered_orders = $result = $this->reports->orderComparison($data,"undelivered");
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+
 }
