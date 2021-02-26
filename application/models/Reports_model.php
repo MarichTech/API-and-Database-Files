@@ -212,7 +212,7 @@ class Reports_model extends CI_Model
 
 		}elseif ($type=="undelivered"){
 			$this->db->where("deliveryStatusId",2);
-			$this->db->like("dateCreated", $instance_month);
+			$this->db->like("orders.dateCreated", $instance_month);
 		}
 		foreach ($data as $key => $value) {
 			if ($value != null) {
