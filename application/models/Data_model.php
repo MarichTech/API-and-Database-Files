@@ -18,7 +18,7 @@ class Data_model extends CI_Model
 
 		/*Prepare data for order table*/
 		$order_table = array(
-			"deliveryStatusId" => 1,
+			"deliveryStatusId" => 2,
 			"dateCreated" => date("Y-m-d H:i:s"),
 			"dateDispatched"=>"",
 			"dateDelivered"=>"",
