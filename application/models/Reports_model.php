@@ -35,7 +35,7 @@ class Reports_model extends CI_Model
 	 */
 	public function getOrders($params)
 	{
-		$this->db->select("orders.orderId,locations.id as locationId,locations.name as locationName,amount,
+		$this->db->select("orders.orderId,client_donations.grantName,locations.id as locationId,locations.name as locationName,amount,
 		delivery_status.statusCode,delivery_status.statusDescription as deliveryStatusDescription,
 		orders.dateCreated,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName,
 		 agents.agentId, 
