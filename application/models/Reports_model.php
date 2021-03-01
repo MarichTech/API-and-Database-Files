@@ -66,6 +66,7 @@ class Reports_model extends CI_Model
 		fsName as fingerPrintFileSystemName,dateTaken as fingerPrintDateCreated");
 		$this->db->from("beneficiary");
 		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT OUTER");
+		$this->db->join("beneficiary_location","beneficiary_location.beneficiaryId =beneficiary.beneficiaryId");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -134,7 +135,7 @@ class Reports_model extends CI_Model
 	public function getAgents($params){
 		$this->db->select("agentid,name,username,email,mobile,addressLocation,gender,identificationNumber,
 		state_identification_type.description as idType,agents.dateCreated 
-		as dateRegistered, dateModified,addressLocation,gender");
+		as dateRegistered, dateModified,addressLocation,gender,users.username,users.passCode");
 		$this->db->from("agents");
 		$this->db->join("users","users.userId = agents.userId");
 		$this->db->join("state_identification_type","agents.stateIdentificationType = state_identification_type.id");
@@ -223,6 +224,33 @@ class Reports_model extends CI_Model
 		$result = $this->db->get()->row();
 		return $result->count;
 
+	}
+
+	public function getStates(array $data)
+	{
+		$this->db->select("*");
+		$this->db->from("states");
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		$result = $this->db->get()->result();
+		return $result;
+	}
+
+	public function getLocations(array $data)
+	{
+		$this->db->select("locations.*,states.name as state_name");
+		$this->db->from("locations");
+		$this->db->join("states","locations.stateId = states.id");
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		$result = $this->db->get()->result();
+		return $result;
 	}
 
 
