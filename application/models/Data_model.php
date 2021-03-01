@@ -16,14 +16,22 @@ class Data_model extends CI_Model
 	 */
 	public function createOrder($order){
 
+		/*Create donation*/
+		$data = array(
+			"clientId"=>$order["client_id"],
+			"grantName"=>$order["grant_name"],
+			"amountAwarded"=>$order["amount"],
+			"balance" =>$order["amount"],
+			"dateAwarded" => date("Y-m-d H:i:s")
+		);
+		$this->db->insert("client_donations",$data);
+		$donation_id = $this->db->insert_id();
 		/*Prepare data for order table*/
 		$order_table = array(
 			"deliveryStatusId" => 2,
 			"dateCreated" => date("Y-m-d H:i:s"),
 			"dateDispatched"=>"",
 			"dateDelivered"=>"",
-			"locationExpected"=>$order["locationExpected"],
-			"locationDelivered"=>"",
 			"amount"=>$order["amount"],
 			"lastUpdated"=>"",
 
@@ -31,23 +39,23 @@ class Data_model extends CI_Model
 		/*Insert into orders table*/
 		$this->db->insert("orders",$order_table);
 		$order_id = $this->db->insert_id();
-		/*Prepare orders_beneficiaries look up table*/
-		$orders_beneficiaries = array(
-			"beneficiaryId"=>$order["beneficiaryId"],
+		/*Prepare order_locations look up table*/
+		$orders_locations = array(
+			"locationId"=>$order["locationId"],
 			"orderId"=>$order_id
 		);
 		/*Insert into orders_beneficiaries */
-		$this->db->insert("orders_beneficiaries",$orders_beneficiaries);
+		$this->db->insert("orders_locations",$orders_locations);
 		/*Prepare orders_donations look up table*/
 		$orders_donations = array(
-			"clientDonationId"=>$order["donationId"],
+			"clientDonationId"=>$donation_id,
 			"orderId"=>$order_id
 		);
 		/*Insert into order donations*/
-		$this->db->insert("orders_donations",$orders_donations);
+		return $this->db->insert("orders_donations",$orders_donations);
 
 		/*Calculate and update balance in donations table*/
-		$this->db->select("balance");
+		/*$this->db->select("balance");
 		$this->db->from("client_donations");
 		$this->db->where("id",$order["donationId"]);
 		$balance_result = $this->db->get()->result("array");
@@ -55,11 +63,11 @@ class Data_model extends CI_Model
 		$new_balance = $balance-$order["amount"];
 		$data= array(
 			"balance"=>$new_balance
-		);
+		);*/
 		/*Update donations with new balance*/
-		$this->db->set("balance",$new_balance);
+	/*	$this->db->set("balance",$new_balance);
 		$this->db->where("id",$order["donationId"]);
-		return $this->db->update("client_donations",$data);
+		return $this->db->update("client_donations",$data);*/
 	}
 
 

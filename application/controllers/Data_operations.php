@@ -23,16 +23,16 @@ class Data_operations extends Base
 	/*Orders*/
 	public function createOrder_post()
 	{
-		$donation_id = $this->input->post('donation_id', TRUE);
-		$beneficiary_id = $this->input->post('beneficiary_id', TRUE);
+		$client_id =  $this->input->post('client_id', TRUE);
+		$location_id = $this->input->post('location_id', TRUE);
 		$amount = $this->input->post('amount', TRUE);
-		$locationExpected = $this->input->post('location_expected', TRUE);
+		$grant_name = $this->input->post('grant_name', TRUE);
 
 		$order = array(
-			"locationExpected" => $locationExpected,
+			"client_id"=>$client_id,
 			"amount" => $amount,
-			"beneficiaryId" => $beneficiary_id,
-			"donationId" => $donation_id
+			"locationId" => $location_id,
+			"grant_name" =>$grant_name
 		);
 
 

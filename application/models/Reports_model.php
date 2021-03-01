@@ -35,14 +35,15 @@ class Reports_model extends CI_Model
 	 */
 	public function getOrders($params)
 	{
-		$this->db->select("orders.orderId,beneficiary.beneficiaryId,beneficiary.beneficiaryName,amount,locationExpected,
-		locationDelivered,delivery_status.statusCode,orders.dateCreated
-		,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName, agents.agentId, 
+		$this->db->select("orders.orderId,locations.id as locationId,locations.name as locationName,amount,
+		delivery_status.statusCode,delivery_status.statusDescription as deliveryStatusDescription,
+		orders.dateCreated,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName,
+		 agents.agentId, 
 		clients.name as clientName, clients.clientId as clientId");
 		$this->db->from("orders");
 		$this->db->join("delivery_status", "orders.deliveryStatusId = delivery_status.statusCode");
-		$this->db->join("orders_beneficiaries", "orders.orderId = orders_beneficiaries.orderId");
-		$this->db->join("beneficiary", "orders_beneficiaries.beneficiaryId = beneficiary.beneficiaryId");
+		$this->db->join("orders_locations", "orders.orderId = orders_locations.orderId","LEFT OUTER");
+		$this->db->join("locations", "orders_locations.locationId = locations.id");
 		$this->db->join("orders_agents", "orders_agents.orderId = orders.orderId", "LEFT OUTER");
 		$this->db->join("agents", "orders_agents.agentId = agents.agentId","LEFT OUTER");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
@@ -62,11 +63,11 @@ class Reports_model extends CI_Model
 	 */
 	public function getBeneficiaries($params)
 	{
-		$this->db->select("beneficiaryId,beneficiaryName,locationAddress,gender,email,mobile,printId,
-		fsName as fingerPrintFileSystemName,dateTaken as fingerPrintDateCreated");
+		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,locationAddress,gender,email,mobile,printId,
+		fsName as fingerPrintFileSystemName,dateTaken as fingerPrintDateCreated,beneficiary_location.locationId");
 		$this->db->from("beneficiary");
 		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT OUTER");
-		$this->db->join("beneficiary_location","beneficiary_location.beneficiaryId =beneficiary.beneficiaryId");
+		$this->db->join("beneficiary_location","beneficiary_location.beneficiaryId =beneficiary.beneficiaryId","LEFT OUTER");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
