@@ -290,7 +290,7 @@ class Reports extends Base
 			"amountAwarded >" => $amount_greater_than,
 			"amountAwarded <" => $amount_less_than,
 			"amountAwarded " => $amount_equal_to,
-		);
+			);
 
 		/*fetch data from model
 		*/
