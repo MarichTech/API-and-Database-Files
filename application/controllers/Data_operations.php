@@ -274,6 +274,38 @@ class Data_operations extends Base
 	function syncBeneficiaries_post(){
 
 	}
+
+	function createLocation_post(){
+		$state_id = $this->input->post("state_id");
+		$name = $this->input->post("name");
+		$data = array(
+			"stateId"=>$state_id,
+			"name"=>$name,
+
+		);
+		$status = $this->operations->addLocation($data);
+		if ($status == true) {
+			$action = "Creat_Location";
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"status" => "true",
+				"message" => "Donation created successfully"
+			], REST_Controller::HTTP_CREATED);
+
+		} else {
+			$action = "Create_Location";
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"result" => "false",
+				"Message" => "An error occured"
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+	}
 }
 
 

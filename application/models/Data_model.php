@@ -250,4 +250,9 @@ class Data_model extends CI_Model
 		return $status;
 	}
 
+	public function addLocation($data)
+	{
+		return $this->db->insert("locations",$data);
+	}
+
 }
