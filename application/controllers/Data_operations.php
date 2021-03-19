@@ -285,17 +285,17 @@ class Data_operations extends Base
 		);
 		$status = $this->operations->addLocation($data);
 		if ($status == true) {
-			$action = "Creat_Location";
+			$action = "Create Location";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
 			$this->createTrail($action,$user_name,$status);
 			$this->response([
 				"status" => "true",
-				"message" => "Donation created successfully"
+				"message" => "Lonation created successfully"
 			], REST_Controller::HTTP_CREATED);
 
 		} else {
-			$action = "Create_Location";
+			$action = "Create Location";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
 			$this->createTrail($action,$user_name,$status);
@@ -303,6 +303,63 @@ class Data_operations extends Base
 				"result" => "false",
 				"Message" => "An error occured"
 			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+	}
+	public function createBeneficiaryGroup_post()
+	{
+		# code...
+		$name  = $this->input->post("name");
+		$description =  $this->input->post("description");
+		$data = array(
+			"name"=>$name,
+			"description"=>$description
+		);
+		$status = $this->operations->addBeneficiaryGroup($data);
+		if ($status == true) {
+			$action = "Create Beneficiary Group";
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"status" => "true",
+				"message" => "Beneficiary group created successfully"
+			], REST_Controller::HTTP_CREATED);
+
+		} else {
+			$action = "Create Beneficiary Group";
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"result" => "false",
+				"Message" => "An error occured"
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+	}
+	public function deleteBeneficiaryGroup_delete(){
+		$group_id = $this->input->get("group_id");
+		$status = $this->operations->deleteBeneficiaryGroup($group_id);
+		if ($status == true) {
+			$action = "Delete Beneficiary Group";
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"status" => "true",
+				"message" => "Beneficiary group deleted successfully"
+			], REST_Controller::HTTP_OK);
+
+		} else {
+			$action = "Delete Beneficiary Group";
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action,$user_name,$status);
+			$this->response([
+				"result" => "false",
+				"Message" => "An error occured"
+			], REST_Controller::HTTP_NO_CONTENT);
 
 		}
 	}

@@ -174,6 +174,7 @@ class Reports extends Base
 		$ip = $this->input->get('ip', TRUE);;
 		$userId = $this->input->get('user_id', TRUE);
 		$dateRange = $this->input->get('dateRange', TRUE);
+		$date = $this->input->get('date', TRUE);
 		$start_date = null;
 		$end_date = null;
 		if (!empty($dateRange)) {
@@ -186,6 +187,7 @@ class Reports extends Base
 			"action" => $action,
 			"ipAdress" => $ip,
 			"userId" => $userId,
+			'DATE(actionTime)'=>"$date",
 			"actionTime>" => $start_date,
 			"actionTime<" => $end_date,
 		);
@@ -385,6 +387,14 @@ class Reports extends Base
 			"locations.id"=>$location_id
 		);
 		$result = $result = $this->reports->getLocations($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function beneficiaryGroups_get()
+	{
+		# code...
+		$result = $result = $this->reports->getBeneficiaryGroups();
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);

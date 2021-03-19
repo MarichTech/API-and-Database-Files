@@ -36,12 +36,12 @@ class Reports_model extends CI_Model
 	public function getOrders($params)
 	{
 		$this->db->select("orders.orderId,client_donations.grantName,locations.id as locationId,locations.name as locationName,amount,
-		delivery_status.statusCode,delivery_status.statusDescription as deliveryStatusDescription,
+		order_activation_status.id as statusCode,order_activation_status.description as activationStatus,
 		orders.dateCreated,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName,
 		 agents.agentId, 
 		clients.name as clientName, clients.clientId as clientId");
 		$this->db->from("orders");
-		$this->db->join("delivery_status", "orders.deliveryStatusId = delivery_status.statusCode");
+		$this->db->join("order_activation_status", "orders.approvalStatus = order_activation_status.id");
 		$this->db->join("orders_locations", "orders.orderId = orders_locations.orderId","LEFT OUTER");
 		$this->db->join("locations", "orders_locations.locationId = locations.id");
 		$this->db->join("orders_agents", "orders_agents.orderId = orders.orderId", "LEFT OUTER");
@@ -108,7 +108,12 @@ class Reports_model extends CI_Model
 		$this->db->join("user_groups","users.groupCode = user_groups.groupCode");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
+				if($key == "action"){
+					
+					$this->db->like("$key", $value);
+				}else{
 				$this->db->where("$key", $value);
+				}
 			}
 		}
 		return $this->db->get()->result("array");
@@ -254,6 +259,13 @@ class Reports_model extends CI_Model
 		}
 		$result = $this->db->get()->result();
 		return $result;
+	}
+	public function getBeneficiaryGroups(){
+		$this->db->select("*");
+		$this->db->from("beneficiary_groups");
+		$result = $this->db->get()->result();
+		return $result;
+
 	}
 
 

@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @author Cyrus Muchiri
+ * @mail cmuchiri8429@gmail.com
+ * v. 1.0.0
+ * Data model
+ */
 
 class Data_model extends CI_Model
 {
@@ -255,4 +260,13 @@ class Data_model extends CI_Model
 		return $this->db->insert("locations",$data);
 	}
 
+	public function addBeneficiaryGroup($data)
+	{	
+		return $this->db->insert("beneficiary_groups",$data);
+	}
+	public function deleteBeneficiaryGroup($id)
+	{	
+		$this->db->where("id",$id);
+		return $this->db->delete("beneficiary_groups");
+	}
 }
