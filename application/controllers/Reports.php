@@ -45,7 +45,7 @@ class Reports extends Base
 	public function orders_get()
 	{
 		/*get attributes*/
-		$delivery_status = $this->input->get('delivery_status', TRUE);
+		$approval_status = $this->input->get('approval_status', TRUE);
 		$date_created = $this->input->get('date_created', TRUE);
 		$date_created_range = $this->input->get('date_created_range', TRUE);
 		$date_delivered = $this->input->get('date_delivered', TRUE);
@@ -70,7 +70,7 @@ class Reports extends Base
 			$date_delivered_to = $separate_dates[1];
 		}
 		$data = array(
-			"statusCode" => $delivery_status,
+			"approvalStatus" => $approval_status,
 			"dateCreated" => $date_created,
 			"dateDelivered" => $date_delivered,
 			"dateCreated >" => $date_created_from,
@@ -87,6 +87,10 @@ class Reports extends Base
 		);
 		/*fetch data from model*/
 		$result = $result = $this->reports->getOrders($data);
+		foreach ($result as $result){
+			$beneficiary_group_amounts =$this->reports->getBeneficiaryGroupAmounts($result["orderId"]);
+			$result["beneficiary_group_amounts"] = $beneficiary_group_amounts;
+		}
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);

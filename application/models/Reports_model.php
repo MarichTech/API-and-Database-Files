@@ -268,5 +268,15 @@ class Reports_model extends CI_Model
 
 	}
 
+	public function getBeneficiaryGroupAmounts($orderId)
+	{
+		$this->db->select("beneficiary_group_amounts.id as ben_group_id,name,amount");
+		$this->db->from("beneficiary_group_amounts");
+		$this->db->join("beneficiary_groups","beneficiary_group_id = beneficiary_groups.id");
+		$this->db->where("order_id",$orderId);
+		$result = $this->db->get()->result();
+		return $result;
+	}
+
 
 }

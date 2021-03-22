@@ -19,7 +19,7 @@ class Data_model extends CI_Model
 	 * @param $order
 	 * @return bool
 	 */
-	public function createOrder($order){
+	public function createOrder($order,$decoded_ben_amounts){
 
 		/*Create donation*/
 		$data = array(
@@ -33,7 +33,7 @@ class Data_model extends CI_Model
 		$donation_id = $this->db->insert_id();
 		/*Prepare data for order table*/
 		$order_table = array(
-			"deliveryStatusId" => 2,
+			"approvalStatus" => 2,
 			"dateCreated" => date("Y-m-d H:i:s"),
 			"dateDispatched"=>"",
 			"dateDelivered"=>"",
@@ -41,15 +41,22 @@ class Data_model extends CI_Model
 			"lastUpdated"=>"",
 
 		);
+
 		/*Insert into orders table*/
 		$this->db->insert("orders",$order_table);
 		$order_id = $this->db->insert_id();
+		/*Insert into beneficiary_group_amounts*/
+		foreach ($decoded_ben_amounts as $decoded_ben_amount){
+			$decoded_ben_amount =(array)$decoded_ben_amount;
+			$decoded_ben_amount["order_id"] = $order_id;
+			$this->db->insert("beneficiary_group_amounts",$decoded_ben_amount);
+		}
 		/*Prepare order_locations look up table*/
 		$orders_locations = array(
 			"locationId"=>$order["locationId"],
 			"orderId"=>$order_id
 		);
-		/*Insert into orders_beneficiaries */
+		/*Insert into orders_locations */
 		$this->db->insert("orders_locations",$orders_locations);
 		/*Prepare orders_donations look up table*/
 		$orders_donations = array(

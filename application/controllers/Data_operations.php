@@ -27,6 +27,8 @@ class Data_operations extends Base
 		$location_id = $this->input->post('location_id', TRUE);
 		$amount = $this->input->post('amount', TRUE);
 		$grant_name = $this->input->post('grant_name', TRUE);
+		$beneficiary_group_amounts = $this->input->post('beneficiary_group_amounts');
+		$decoded_ben_amounts = (array)json_decode($beneficiary_group_amounts);
 
 		$order = array(
 			"client_id"=>$client_id,
@@ -36,7 +38,7 @@ class Data_operations extends Base
 		);
 
 
-		$status = $this->operations->createOrder($order);
+		$status = $this->operations->createOrder($order,$decoded_ben_amounts);
 		if ($status == true) {
 			$action = "Create Order";
 			$status = "Success";
@@ -272,6 +274,10 @@ class Data_operations extends Base
 
 
 	function syncBeneficiaries_post(){
+
+	}
+
+	function uploadTransactions_post(){
 
 	}
 
