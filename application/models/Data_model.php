@@ -310,4 +310,7 @@ class Data_model extends CI_Model
 		);
 		return $this->db->insert("beneficiary",$beneficiary);
 	}
+	public function newTransaction($data){
+		$this->db->insert("transactions",$data);
+	}
 }

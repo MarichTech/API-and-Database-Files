@@ -358,6 +358,32 @@ class Data_operations extends Base
 	function uploadTransactions_post()
 	{
 		/*Upload Transactions*/
+		$beneficiary_id = $this->input->post("beneficiary_id");
+		$order_id = $this->input->post("order_id");
+		$verified_person = $this->input->post("verified_person");
+		$kin_id = $this->input->post("kin_id");
+		$longitude = $this->input->post("longitude");
+		$latitude = $this->input->post("latitude");
+		$amount = $this->input->post("amount");
+		$time_of_transaction = $this->input->post("time_of_transaction");
+		$data = array(
+			
+			"beneficiary_id" => $beneficiary_id,
+			"order_id" => $order_id,
+			"verified_person" => $verified_person,
+			"kin_id" => $kin_id,
+			"longitude" => $longitude,
+			"latitude" => $latitude,
+			"amount" => $amount,
+			"time_of_transaction" => $time_of_transaction,
+			"date_uploaded" =>date("Y-m-d H:i:s")
+
+		);
+		$status = $this->operations->newTransaction($data);
+		$this->response([
+			"result" => "true",
+			"Message" => "Beneficiary Uploaded"
+		], REST_Controller::HTTP_CREATED);
 	}
 
 	function createLocation_post()
