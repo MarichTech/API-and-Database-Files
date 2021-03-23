@@ -18,12 +18,26 @@ class Data_operations extends Base
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
+		/*If not exists create the following folders*/
+		if (!file_exists(FCPATH . 'assets/')) {
+			mkdir(FCPATH . 'assets/');
+		}
+		DEFINE("PICTURES", FCPATH . 'assets/pictures');
+		DEFINE("FINGERPRINTS", FCPATH . 'assets/fingerprints');
+		/*FingerPrints FCPATH./assets/pictures*/
+		if (!file_exists(FCPATH . 'assets/pictures')) {
+			mkdir(FCPATH . 'assets/pictures');
+		}
+		/*Pictures FCPATH./assets/fingerprints*/
+		if (!file_exists(FCPATH . 'assets/fingerprints')) {
+			mkdir(FCPATH . 'assets/fingerprints');
+		}
 	}
 
 	/*Orders*/
 	public function createOrder_post()
 	{
-		$client_id =  $this->input->post('client_id', TRUE);
+		$client_id = $this->input->post('client_id', TRUE);
 		$location_id = $this->input->post('location_id', TRUE);
 		$amount = $this->input->post('amount', TRUE);
 		$grant_name = $this->input->post('grant_name', TRUE);
@@ -31,19 +45,19 @@ class Data_operations extends Base
 		$decoded_ben_amounts = (array)json_decode($beneficiary_group_amounts);
 
 		$order = array(
-			"client_id"=>$client_id,
+			"client_id" => $client_id,
 			"amount" => $amount,
 			"locationId" => $location_id,
-			"grant_name" =>$grant_name
+			"grant_name" => $grant_name
 		);
 
 
-		$status = $this->operations->createOrder($order,$decoded_ben_amounts);
+		$status = $this->operations->createOrder($order, $decoded_ben_amounts);
 		if ($status == true) {
 			$action = "Create Order";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true"
 			], REST_Controller::HTTP_CREATED);
@@ -52,7 +66,7 @@ class Data_operations extends Base
 			$action = "Create Order";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false"
 			], REST_Controller::HTTP_BAD_REQUEST);
@@ -76,16 +90,16 @@ class Data_operations extends Base
 			"amount" => $amount,
 			"locationExpected" => $locationExpected,
 			"locationDelivered" => $locationDelivered,
-			"dateDelivered"=>$dateDelivered,
-			"lastUpdated"=>date("Y-m-d H:i:s")
+			"dateDelivered" => $dateDelivered,
+			"lastUpdated" => date("Y-m-d H:i:s")
 		);
-		$status = $this->operations->updateOrder($order,$orderId);
+		$status = $this->operations->updateOrder($order, $orderId);
 
 		if ($status == true) {
 			$action = "Update Order";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true"
 			], REST_Controller::HTTP_CREATED);
@@ -94,7 +108,7 @@ class Data_operations extends Base
 			$action = "Update Order";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false"
 			], REST_Controller::HTTP_BAD_REQUEST);
@@ -103,19 +117,20 @@ class Data_operations extends Base
 
 	}
 
-	function linkOrder_post(){
+	function linkOrder_post()
+	{
 		$agent_id = $this->input->post('agent_id', TRUE);
 		$order_id = $this->input->post('order_id', TRUE);
 		$data = array(
 			"order_id" => $order_id,
-			"agent_id"=>$agent_id
+			"agent_id" => $agent_id
 		);
 		$status = $this->operations->linkOrder($data);
 		if ($status == true) {
 			$action = "Assign Order";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true"
 			], REST_Controller::HTTP_CREATED);
@@ -124,7 +139,7 @@ class Data_operations extends Base
 			$action = "Assign Order";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
 				"message" => "Order is probably already assigned"
@@ -192,7 +207,7 @@ class Data_operations extends Base
 				$action = "Create User";
 				$status = "Success";
 				$user_name = $_SERVER['PHP_AUTH_USER'];
-				$this->createTrail($action,$user_name,$status);
+				$this->createTrail($action, $user_name, $status);
 				$this->response([
 					"status" => "true",
 					"message" => "User created successfully"
@@ -202,7 +217,7 @@ class Data_operations extends Base
 				$action = "Create User";
 				$status = "Fail";
 				$user_name = $_SERVER['PHP_AUTH_USER'];
-				$this->createTrail($action,$user_name,$status);
+				$this->createTrail($action, $user_name, $status);
 				$this->response([
 					"result" => "false",
 					"Message" => "Existing username or broken input"
@@ -219,12 +234,10 @@ class Data_operations extends Base
 
 	}
 
-	function updateClients_post(){
+	function updateClients_post()
+	{
 
 	}
-
-
-
 
 
 	/*Donations*/
@@ -235,9 +248,9 @@ class Data_operations extends Base
 		$date_awarded = $this->input->post('dateAwarded', TRUE);;
 
 		$data = array(
-			"clientId"=>$client_id,
-			"amountAwarded"=>$amount,
-			"balance" =>$amount,
+			"clientId" => $client_id,
+			"amountAwarded" => $amount,
+			"balance" => $amount,
 			"dateAwarded" => $date_awarded
 		);
 		$status = true;
@@ -246,7 +259,7 @@ class Data_operations extends Base
 			$action = "Create Donation";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true",
 				"message" => "Donation created successfully"
@@ -256,7 +269,7 @@ class Data_operations extends Base
 			$action = "Create Donation";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
 				"Message" => "An error occured"
@@ -273,20 +286,87 @@ class Data_operations extends Base
 	}
 
 
-	function syncBeneficiaries_post(){
+	function syncBeneficiaries_post()
+	{
+		$beneficiary_id = $this->input->post("beneficiary_id");
+		$name = $this->input->post("beneficiary_name");
+		$dob = $this->input->post("beneficiary_dob");
+		$gender = $this->input->post("gender");
+		$locationId = $this->input->post("locationId");
+		$identificationNumber = $this->input->post("identification_number");
+		$contactInfo = $this->input->post("contact_info");
+		$no_of_kin = $this->input->post("no_of_kin");
+		$agent_id = $this->input->post("agent_id");
+		$beneficiary_group = $this->input->post("beneficiaryGroupId");
+		$date_registered = $this->input->post("dateRegistered");
+		$printId = $this->input->post("printId");
+		$beneficiary_picture = $_FILES['picture'];
+		$target_dir = PICTURES;
+		$picture = $beneficiary_picture["name"];
+
+		if (move_uploaded_file($_FILES["picture"]["tmp_name"], "$target_dir/$picture")) {
+			/*Upload Fingerprint*/
+			$beneficiary_fingerprint = $_FILES['fingerprint'];
+			$target_dir = FINGERPRINTS;
+			$fingerprint = $beneficiary_fingerprint["name"];
+			if (move_uploaded_file($_FILES["fingerprint"]["tmp_name"], "$target_dir/$fingerprint")) {
+				//prepare data to insert to db
+
+				$data = array(
+					"beneficiaryId" => $beneficiary_id,
+					"beneficiaryName" => $name,
+					"mobile" => $contactInfo,
+					"locationId" => $locationId,
+					"email" => '',
+					"dob" => $dob,
+					"national_id" => $identificationNumber,
+					"gender" => $gender,
+					"pictureName" => $picture,
+					"fingerprint" => $fingerprint,
+					"no_of_kin" => $no_of_kin,
+					"registeredBy" => $agent_id,
+					"beneficiaryGroupId" => $beneficiary_group,
+					"dateRegistered" => $date_registered,
+					"printId" => $printId,
+					"dateUploaded" => date("Y-m-d H:i:s"),
+
+				);
+				$status = $this->operations->newBeneficiary($data);
+				$this->response([
+					"result" => "true",
+					"Message" => "Beneficiary Uploaded"
+				], REST_Controller::HTTP_CREATED);
+
+			} else {
+				$this->response([
+					"result" => "false",
+					"Message" => "Could not upload fingerprint"
+				], REST_Controller::HTTP_BAD_REQUEST);
+
+			}
+		} else {
+			$this->response([
+				"result" => "false",
+				"Message" => "Could not upload Picture"
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+
 
 	}
 
-	function uploadTransactions_post(){
-
+	function uploadTransactions_post()
+	{
+		/*Upload Transactions*/
 	}
 
-	function createLocation_post(){
+	function createLocation_post()
+	{
 		$state_id = $this->input->post("state_id");
 		$name = $this->input->post("name");
 		$data = array(
-			"stateId"=>$state_id,
-			"name"=>$name,
+			"stateId" => $state_id,
+			"name" => $name,
 
 		);
 		$status = $this->operations->addLocation($data);
@@ -294,7 +374,7 @@ class Data_operations extends Base
 			$action = "Create Location";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true",
 				"message" => "Lonation created successfully"
@@ -304,7 +384,7 @@ class Data_operations extends Base
 			$action = "Create Location";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
 				"Message" => "An error occured"
@@ -312,21 +392,23 @@ class Data_operations extends Base
 
 		}
 	}
-	public function createBeneficiaryGroup_post()
+
+	public
+	function createBeneficiaryGroup_post()
 	{
 		# code...
-		$name  = $this->input->post("name");
-		$description =  $this->input->post("description");
+		$name = $this->input->post("name");
+		$description = $this->input->post("description");
 		$data = array(
-			"name"=>$name,
-			"description"=>$description
+			"name" => $name,
+			"description" => $description
 		);
 		$status = $this->operations->addBeneficiaryGroup($data);
 		if ($status == true) {
 			$action = "Create Beneficiary Group";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true",
 				"message" => "Beneficiary group created successfully"
@@ -336,7 +418,7 @@ class Data_operations extends Base
 			$action = "Create Beneficiary Group";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
 				"Message" => "An error occured"
@@ -344,14 +426,17 @@ class Data_operations extends Base
 
 		}
 	}
-	public function deleteBeneficiaryGroup_delete(){
+
+	public
+	function deleteBeneficiaryGroup_delete()
+	{
 		$group_id = $this->input->get("group_id");
 		$status = $this->operations->deleteBeneficiaryGroup($group_id);
 		if ($status == true) {
 			$action = "Delete Beneficiary Group";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"status" => "true",
 				"message" => "Beneficiary group deleted successfully"
@@ -361,7 +446,7 @@ class Data_operations extends Base
 			$action = "Delete Beneficiary Group";
 			$status = "Fail";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
-			$this->createTrail($action,$user_name,$status);
+			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
 				"Message" => "An error occured"

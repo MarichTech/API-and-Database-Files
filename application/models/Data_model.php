@@ -276,4 +276,38 @@ class Data_model extends CI_Model
 		$this->db->where("id",$id);
 		return $this->db->delete("beneficiary_groups");
 	}
+
+	public function newBeneficiary(array $data)
+	{
+		/*Fingerprints*/
+		$fingerPrints = array(
+			"printId" =>$data["printId"],
+			"fsName"=>$data["fingerprint"],
+		);
+		$this->db->insert("fingerprints",$fingerPrints);
+		/*Locations*/
+		$locations = array(
+			"beneficiaryId" =>$data["beneficiaryId"],
+			"locationId"=>$data["locationId"],
+		);
+		$this->db->insert("beneficiary_location",$locations);
+		$beneficiary = array(
+			"beneficiaryId" => $data["beneficiaryId"],
+			"beneficiaryName" => $data["beneficiaryName"],
+			"mobile" => $data["mobile"],
+			"locationId" => $data["locationId"],
+			"email" => '',
+			"dob" => $data["dob"],
+			"national_id" => $data["national_id"],
+			"gender" => $data["gender"],
+			"pictureName" => $data["pictureName"],
+			"no_of_kin" => $data["no_of_kin"],
+			"registeredBy"=>$data["registeredBy"],
+			"beneficiaryGroupId"=>$data["beneficiaryGroupId"],
+			"dateRegistered" => $data["dateRegistered"],
+			"fingerPrintId"=>$data["printId"],
+			"dateUploaded" => $data["dateUploaded"],
+		);
+		return $this->db->insert("beneficiary",$beneficiary);
+	}
 }
