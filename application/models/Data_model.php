@@ -311,6 +311,29 @@ class Data_model extends CI_Model
 		return $this->db->insert("beneficiary",$beneficiary);
 	}
 	public function newTransaction($data){
-		$this->db->insert("transactions",$data);
+		$this->db->select("id");
+		$this->db->from("transactions");
+		$this->db->where("beneficiary_id",$data["beneficiary_id"]);
+		$this->db->where("time_of_transaction",$data["time_of_transaction"]);
+		$this->db->where("order_id",$data["order_id"]);
+		$count = $this->db->get()->num_rows();
+		if(count >0){
+			return false;
+		}else{
+		return 		$this->db->insert("transactions",$data);
+
+		}
+
+	}
+	public function checkExistence($beneficiary_id){
+		$this->db->select('*');
+		$this->db->from("beneficiary");
+		$this->db->where("beneficiary_id",$beneficiary_id);
+		$count = $this->db->get()->num_rows();
+		if(count >0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

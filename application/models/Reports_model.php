@@ -63,7 +63,7 @@ class Reports_model extends CI_Model
 	 */
 	public function getBeneficiaries($params)
 	{
-		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,locationAddress,gender,email,mobile,printId,
+		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,location.name as locationAddress,gender,email,mobile,printId,
 		fsName as fingerPrintFileSystemName,dateTaken as fingerPrintDateCreated,beneficiary_location.locationId,locations.name
 		,dob,pictureName,national_id");
 		$this->db->from("beneficiary");

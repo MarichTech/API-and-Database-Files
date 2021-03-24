@@ -304,6 +304,14 @@ class Data_operations extends Base
 		$target_dir = PICTURES;
 		$picture = $beneficiary_picture["name"];
 
+		$status = $this->operations->checkExistence($beneficiary_id);
+		if($status == true){
+			$this->response([
+				"result" => "false",
+				"Message" => "Already Uploaded"
+			], REST_Controller::HTTP_ALREADY_REPORTED);
+		}else{
+
 		if (move_uploaded_file($_FILES["picture"]["tmp_name"], "$target_dir/$picture")) {
 			/*Upload Fingerprint*/
 			$beneficiary_fingerprint = $_FILES['fingerprint'];
@@ -351,8 +359,12 @@ class Data_operations extends Base
 			], REST_Controller::HTTP_BAD_REQUEST);
 
 		}
+	}
 
 
+	}
+	function syncKin_post(){
+		
 	}
 
 	function uploadTransactions_post()
@@ -380,11 +392,18 @@ class Data_operations extends Base
 
 		);
 		$status = $this->operations->newTransaction($data);
+		if(status == false){
+			$this->response([
+				"result" => "true",
+				"Message" => "Transaction Was already updated"
+			], REST_Controller::HTTP_ALREADY_REPORTED);
+		}else{
 		$this->response([
 			"result" => "true",
-			"Message" => "Beneficiary Uploaded"
+			"Message" => "Transaction Uploaded"
 		], REST_Controller::HTTP_CREATED);
 	}
+}
 
 	function createLocation_post()
 	{
