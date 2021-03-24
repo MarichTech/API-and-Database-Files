@@ -361,7 +361,7 @@ class Data_model extends CI_Model
 			"kinId" =>$data["kinId"],
 			"locationId"=>$data["locationId"],
 		);
-		$this->db->insert("beneficiary_location",$locations);
+		$this->db->insert("kin_locations",$locations);
 		$kin = array(
 			"kinId" => $data["kinId"],
 			"beneficiaryId" => $data["beneficiaryId"],
