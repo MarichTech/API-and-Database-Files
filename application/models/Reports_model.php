@@ -64,12 +64,11 @@ class Reports_model extends CI_Model
 	public function getBeneficiaries($params)
 	{
 		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,locations.name as locationAddress,gender,email,mobile,printId,
-		fsName as fingerPrintFileSystemName,beneficiary_location.locationId,locations.name
+		fsName as fingerPrintFileSystemName,beneficiary.locationId,locations.name
 		,dob,pictureName,national_id");
 		$this->db->from("beneficiary");
-		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT OUTER");
-		$this->db->join("beneficiary_location","beneficiary_location.beneficiaryId =beneficiary.beneficiaryId","LEFT OUTER");
-		$this->db->join("locations","beneficiary_location.locationId =locations.id","LEFT OUTER");
+		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT");
+		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
