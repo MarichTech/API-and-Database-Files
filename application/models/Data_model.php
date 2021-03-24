@@ -336,4 +336,46 @@ class Data_model extends CI_Model
 			return false;
 		}
 	}
+	public function checkExistenceKin($kin_id){
+		$this->db->select('*');
+		$this->db->from("kin");
+		$this->db->where("kinId",$kin_id);
+		$count = $this->db->get()->num_rows();
+		if($count >0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public function newKin(array $data)
+	{
+		/*Fingerprints*/
+		$fingerPrints = array(
+			"printId" =>$data["printId"],
+			"fsName"=>$data["fingerprint"],
+		);
+		$this->db->insert("fingerprints",$fingerPrints);
+		/*Locations*/
+		$locations = array(
+			"kinId" =>$data["kinId"],
+			"locationId"=>$data["locationId"],
+		);
+		$this->db->insert("beneficiary_location",$locations);
+		$kin = array(
+			"kinId" => $data["kinId"],
+			"beneficiaryId" => $data["beneficiaryId"],
+			"kinName" => $data["kinName"],
+			"dob" => $data["dob"],
+			"gender" => $data["gender"],
+			"locationId" => $data["locationId"],
+			"identificationNo" => $data["identificationNo"],
+			"mobile" => $data["mobile"],
+			"printId" => $data["printId"],
+			"pictureName" => $data["pictureName"],
+			"relationship	" => $data["relationship"],
+			"dateUploaded" => $data["dateUploaded"],
+		);
+		return $this->db->insert("kin",$kin);
+	}
 }

@@ -355,7 +355,73 @@ class Data_operations extends Base
     }
     public function syncKin_post()
     {
+		$kin_id = $this->input->post("kin_id");
+		$beneficiary_id = $this->input->post("beneficiary_id");
+        $name = $this->input->post("name");
+        $dob = $this->input->post("dob");
+        $gender = $this->input->post("gender");
+        $locationId = $this->input->post("locationId");
+        $identificationNumber = $this->input->post("identification_number");
+        $contactInfo = $this->input->post("contact_info");
+        $printId = $this->input->post("printId");
+        $kin_picture = $_FILES['picture'];
+        $target_dir = PICTURES;
+        $picture = $kin_picture["name"];
+        $relatonship = $this->input->post("relationship");
 
+        $status = $this->operations->checkExistenceKin($kin_id);
+        if ($status == true) {
+            $this->response([
+                "result" => "false",
+                "Message" => "Already Uploaded",
+            ], REST_Controller::HTTP_OK);
+        } else {
+
+            if (move_uploaded_file($_FILES["picture"]["tmp_name"], "$target_dir/$picture")) {
+                /*Upload Fingerprint*/
+                $kin_fingerprint = $_FILES['fingerprint'];
+                $target_dir = FINGERPRINTS;
+                $fingerprint = $kin_fingerprint["name"];
+                if (move_uploaded_file($_FILES["fingerprint"]["tmp_name"], "$target_dir/$fingerprint")) {
+                    //prepare data to insert to db
+
+                    $data = array(
+                        "kinId" => $kin_id,
+                        "beneficiaryId" => $beneficiary_id,
+                        "kinName" => $name,
+                        "dob" => $dob,
+                        "gender" => $gender,
+                        "locationId" => $locationId,
+                        "identificationNo" => $identificationNumber,
+                        "mobile" => $contactInfo,
+                        "pictureName" => $picture,
+                        "fingerprint" => $fingerprint,
+                        "relationship" => $relatonship,
+						"printId" => $printId,
+                        "dateUploaded" => date("Y-m-d H:i:s"),
+
+                    );
+                    $status = $this->operations->newKin($data);
+                    $this->response([
+                        "result" => "true",
+                        "Message" => "Kin Uploaded",
+                    ], REST_Controller::HTTP_CREATED);
+
+                } else {
+                    $this->response([
+                        "result" => "false",
+                        "Message" => "Could not upload fingerprint",
+                    ], REST_Controller::HTTP_BAD_REQUEST);
+
+                }
+            } else {
+                $this->response([
+                    "result" => "false",
+                    "Message" => "Could not upload Picture",
+                ], REST_Controller::HTTP_BAD_REQUEST);
+
+            }
+        }
     }
 
     public function uploadTransactions_post()
