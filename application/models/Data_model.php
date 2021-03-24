@@ -328,7 +328,7 @@ class Data_model extends CI_Model
 	public function checkExistence($beneficiary_id){
 		$this->db->select('*');
 		$this->db->from("beneficiary");
-		$this->db->where("beneficiary_id",$beneficiary_id);
+		$this->db->where("beneficiaryId",$beneficiary_id);
 		$count = $this->db->get()->num_rows();
 		if(count >0){
 			return true;
