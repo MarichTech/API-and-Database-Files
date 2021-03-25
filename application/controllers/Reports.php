@@ -409,6 +409,7 @@ class Reports extends Base
 		$agent_id = $this->input->get('agent_id', TRUE);
 		$beneficiary_id = $this->input->get('beneficiary_id', TRUE);
 		$order_id = $this->input->get('order_id', TRUE);
+		$client_id = $this->input->get('client_id', TRUE);
 		$date_to = null;
 		$date_from = null;
 		if (!empty($date_range)) {
@@ -423,6 +424,7 @@ class Reports extends Base
 			"t.agent_id" => $agent_id,
 			"t.beneficiary_id" => $beneficiary_id,
 			"t.order_id" => $order_id,
+			"client_donations.clientId" => $client_id,
 		);
 		$result = $this->reports->getTransactions($data);
 		$location_name = null;
