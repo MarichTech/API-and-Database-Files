@@ -54,7 +54,7 @@ class Reports_model extends CI_Model
 				$this->db->where("$key", $value);
 			}
 		}
-		return $this->db->get()->result("array");
+		return $this->db->get()->result();
 	}
 
 	/**

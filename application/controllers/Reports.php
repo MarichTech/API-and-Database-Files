@@ -86,10 +86,10 @@ class Reports extends Base
 
 		);
 		/*fetch data from model*/
-		$result = $result = $this->reports->getOrders($data);
-		foreach ($result as $result){
-			$beneficiary_group_amounts =$this->reports->getBeneficiaryGroupAmounts($result["orderId"]);
-			$result["beneficiary_group_amounts"] = $beneficiary_group_amounts;
+		$result = $this->reports->getOrders($data);
+		foreach ($result as $result_){
+			$beneficiary_group_amounts =$this->reports->getBeneficiaryGroupAmounts($result_->orderId);
+			$result_->beneficiary_group_amounts = $beneficiary_group_amounts;
 		}
 		$this->response([
 			"result" => $result
