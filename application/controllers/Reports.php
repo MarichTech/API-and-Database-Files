@@ -480,7 +480,7 @@ class Reports extends Base
 					}
 				}
 
-			$item->loctionName = $location_name;
+			$item->locationDelivered = $location_name;
 		}
 
 		$this->response([

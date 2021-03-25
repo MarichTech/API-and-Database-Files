@@ -280,18 +280,18 @@ class Reports_model extends CI_Model
 	public function getTransactions($data){
 		$this->db->select("t.id as transaction_id,t.beneficiary_id,t.order_id,t.agent_id,b.beneficiaryName as beneficiary_name,
 		client_donations.grantName as grant_name,t.verified_person,t.kin_id,
-		t.amount,t.time_of_transaction,agents.name as agent_name,t.longitude,t.latitude");
+		t.amount,t.time_of_transaction,agents.name as agent_name,t.longitude,t.latitude,locations.name as locationExpected");
 		$this->db->from("transactions t");
 		$this->db->join("beneficiary b","b.beneficiaryId = t.beneficiary_id");
 		$this->db->join("agents","agents.agentId = t.agent_id","LEFT OUTER");
 		$this->db->join("orders","orders.orderId = t.order_id");
 		$this->db->join("orders_donations","orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations","orders_donations.clientDonationId = client_donations.id");
+		$this->db->join("orders_locations","orders.orderId = orders_locations.orderId");
+		$this->db->join("locations","orders_locations.locationId = locations.id");
 		foreach ($data as $key => $value) {
 			if ($value != null) {
-
 					$this->db->where("$key", $value);
-
 			}
 		}
 		return $this->db->get()->result();
