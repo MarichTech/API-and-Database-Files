@@ -113,6 +113,37 @@ class Data_operations extends Base
         }
 
     }
+    function approveOrder_post(){
+    	//change status
+		$order_id = $this->input->post('order_id', true);
+		$data = array(
+			"order_id" => $order_id,
+		);
+		$status = $this->operations->approveOrder($data);
+
+
+		if ($status == true) {
+			//send mail
+			$action = "Approve Order";
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action, $user_name, $status);
+			$this->response([
+				"status" => "true",
+			], REST_Controller::HTTP_CREATED);
+
+		} else {
+			$action = "Approve Order";
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action, $user_name, $status);
+			$this->response([
+				"result" => "false",
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+
+	}
 
     public function linkOrder_post()
     {

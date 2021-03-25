@@ -378,4 +378,16 @@ class Data_model extends CI_Model
 		);
 		return $this->db->insert("kin",$kin);
 	}
+
+    public function approveOrder(array $data)
+    {
+    	$dataUpdate = array(
+    		"approvalStatus" => 1,
+			"lastUpdated"=> date("Y-m-d H:i:s")
+		);
+    	$this->db->set("lastUpdated",$dataUpdate["lastUpdated"]);
+    	$this->db->set("approvalStatus",$dataUpdate["approvalStatus"]);
+    	$this->db->where("orderId",$data["order_id"]);
+    	return $this->db->update("orders",$dataUpdate);
+    }
 }

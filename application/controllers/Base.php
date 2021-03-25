@@ -67,4 +67,8 @@ class Base extends REST_Controller
 		return $ipaddress;
 	}
 
+	function sendMail(){
+
+	}
+
 }
