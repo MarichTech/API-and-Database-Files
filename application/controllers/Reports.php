@@ -398,10 +398,124 @@ class Reports extends Base
 	public function beneficiaryGroups_get()
 	{
 		# code...
-		$result = $result = $this->reports->getBeneficiaryGroups();
+		$result  = $this->reports->getBeneficiaryGroups();
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
 	}
+	public function transactions_get(){
+		$date = $this->input->get('date', TRUE);
+		$date_range = $this->input->get('date_range', TRUE);
+		$agent_id = $this->input->get('agent_id', TRUE);
+		$beneficiary_id = $this->input->get('beneficiary_id', TRUE);
+		$order_id = $this->input->get('order_id', TRUE);
+		$date_to = null;
+		$date_from = null;
+		if (!empty($date_range)) {
+			$separate_dates = $this->splitDateRange($date_range);
+			$date_from = $separate_dates[0];
+			$date_to = $separate_dates[1];
+		}
+		$data = array(
+			"time_of_transaction" => $date,
+			"time_of_transaction >" => $date_from,
+			"time_of_transaction <" => $date_to,
+			"t.agent_id" => $agent_id,
+			"t.beneficiary_id" => $beneficiary_id,
+			"t.order_id" => $order_id,
+		);
+		$result = $this->reports->getTransactions($data);
+		$location_name = null;
+		foreach ($result as $item) {
+			/*Get City, Town From Latitude and Longitude*/
+				$geolocation = $item->latitude . ',' . $item->longitude;
+				$request = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $geolocation . '&sensor=false&key=AIzaSyCYj7_3RpBL7ozF-WIk_piDxo-BSFOt1rM';
+				$file_contents = file_get_contents($request);
+				$json_decode = json_decode($file_contents);
+				if (isset($json_decode->results[0])) {
+					$response = array();
+					foreach ($json_decode->results[0]->address_components as $addressComponet) {
+						if (in_array('political', $addressComponet->types)) {
+							$response[] = $addressComponet->long_name;
+						}
+					}
+
+					if (isset($response[0])) {
+						$first = $response[0];
+					} else {
+						$first = 'null';
+					}
+					if (isset($response[1])) {
+						$second = $response[1];
+					} else {
+						$second = 'null';
+					}
+					if (isset($response[2])) {
+						$third = $response[2];
+					} else {
+						$third = 'null';
+					}
+					if (isset($response[3])) {
+						$fourth = $response[3];
+					} else {
+						$fourth = 'null';
+					}
+					if (isset($response[4])) {
+						$fifth = $response[4];
+					} else {
+						$fifth = 'null';
+					}
+
+
+					if ($first != 'null' && $second != 'null' && $third != 'null' && $fourth != 'null' && $fifth != 'null') {
+						$location_name = $first .' ,'.$second.' ,'.$third.' ,'.$fourth.' ,'.$fifth;
+					} else if ($first != 'null' && $second != 'null' && $third != 'null' && $fourth != 'null' && $fifth == 'null') {
+						$location_name = $first .' ,'.$second.' ,'.$third.' ,'.$fourth;
+					} else if ($first != 'null' && $second != 'null' && $third != 'null' && $fourth == 'null' && $fifth == 'null') {
+						$location_name = $first .' ,'.$second.' ,'.$third;
+					} else if ($first != 'null' && $second != 'null' && $third == 'null' && $fourth == 'null' && $fifth == 'null') {
+						$location_name = $first .' ,'.$second;
+					} else if ($first != 'null' && $second == 'null' && $third == 'null' && $fourth == 'null' && $fifth == 'null') {
+						$location_name = $first .'';
+					}
+				}
+
+			$item->loctionName = $location_name;
+		}
+
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+
+	public function transactionsGraph_get(){
+
+		$dat = date('Y-m-d');
+		$date = new DateTime($dat);
+		$client_id = $this->input->get('client_id', TRUE);
+
+		$result['transactions'] = array();
+
+
+		$period = $date->modify("-11 months");
+		for ($i = 0; $i < 12; $i++) {
+			$instance_month = $period->format("Y-m");
+			$data = array(
+				"client_donations.clientId" => $client_id,
+				"time_of_transaction"=>$instance_month
+
+			);
+
+			array_push($result['transactions'], $this->reports->getTransactionForGraph($data));
+			$period = $date->modify("+1 months");
+
+		}
+
+		$this->response([
+			"status" => "true",
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+
 
 }

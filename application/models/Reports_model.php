@@ -209,8 +209,8 @@ class Reports_model extends CI_Model
 	public function orderComparison(array $data,$type,$instance_month)
 	{
 
-		$this->db->select("count(orders.orderId) as count");
-		$this->db->from("orders");
+		$this->db->select("count(transactions.id) as count");
+		$this->db->from("transactions");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
 
@@ -275,6 +275,48 @@ class Reports_model extends CI_Model
 		$this->db->where("order_id",$orderId);
 		$result = $this->db->get()->result();
 		return $result;
+	}
+
+	public function getTransactions($data){
+		$this->db->select("t.id as transaction_id,t.beneficiary_id,t.order_id,t.agent_id,b.beneficiaryName as beneficiary_name,
+		client_donations.grantName as grant_name,t.verified_person,t.kin_id,
+		t.amount,t.time_of_transaction,agents.name as agent_name,t.longitude,t.latitude");
+		$this->db->from("transactions t");
+		$this->db->join("beneficiary b","b.beneficiaryId = t.beneficiary_id");
+		$this->db->join("agents","agents.agentId = t.agent_id","LEFT OUTER");
+		$this->db->join("orders","orders.orderId = t.order_id");
+		$this->db->join("orders_donations","orders.orderId = orders_donations.orderId");
+		$this->db->join("client_donations","orders_donations.clientDonationId = client_donations.id");
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+
+					$this->db->where("$key", $value);
+
+			}
+		}
+		return $this->db->get()->result();
+	}
+	public function getTransactionForGraph($data){
+		$this->db->select("count(t.id) as count");
+		$this->db->from("transactions t");
+		$this->db->join("beneficiary b","b.beneficiaryId = t.beneficiary_id");
+		$this->db->join("agents","agents.agentId = t.agent_id","LEFT OUTER");
+		$this->db->join("orders","orders.orderId = t.order_id");
+		$this->db->join("orders_donations","orders.orderId = orders_donations.orderId");
+		$this->db->join("client_donations","orders_donations.clientDonationId = client_donations.id");
+
+
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				if($key == "time_of_transaction"){
+					$this->db->like("$key", $value);
+				}else {
+					$this->db->where("$key", $value);
+				}
+			}
+		}
+		$result = $this->db->get()->row();
+		return $result->count;
 	}
 
 
