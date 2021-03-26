@@ -48,40 +48,38 @@ class Reports extends Base
 		$approval_status = $this->input->get('approval_status', TRUE);
 		$date_created = $this->input->get('date_created', TRUE);
 		$date_created_range = $this->input->get('date_created_range', TRUE);
-		$date_delivered = $this->input->get('date_delivered', TRUE);
-		$date_delivered_range = $this->input->get('date_delivered_range', TRUE);
+		$date_approved = $this->input->get('date_approved', TRUE);
+		$date_approved_range = $this->input->get('date_approved_range', TRUE);
 		$agent = $this->input->get('agent_id', TRUE);
-		$beneficiary = $this->input->get('beneficiary_id', TRUE);
 		$order_id = $this->input->get('order_id', TRUE);
-		$donation_id = $this->input->get('donation_id', TRUE);
 		$client_id = $this->input->get('client_id', TRUE);
+		$location = $this->input->get('location_id', TRUE);
 		$date_created_from = null;
 		$date_created_to = null;
-		$date_delivered_from = null;
-		$date_delivered_to = null;
+		$date_approved_from = null;
+		$date_approved_to = null;
 		if (!empty($date_created_range)) {
 			$separate_dates = $this->splitDateRange($date_created_range);
 			$date_created_from = $separate_dates[0];
 			$date_created_to = $separate_dates[1];
 		}
-		if (!empty($date_delivered_range)) {
-			$separate_dates = $this->splitDateRange($date_delivered_range);
-			$date_delivered_from = $separate_dates[0];
-			$date_delivered_to = $separate_dates[1];
+		if (!empty($date_approved_range)) {
+			$separate_dates = $this->splitDateRange($date_approved_range);
+			$date_approved_from = $separate_dates[0];
+			$date_approved_to = $separate_dates[1];
 		}
 		$data = array(
 			"approvalStatus" => $approval_status,
 			"dateCreated" => $date_created,
-			"dateDelivered" => $date_delivered,
+			"lastUpdated" => $date_approved,
 			"dateCreated >" => $date_created_from,
 			"dateCreated <" => $date_created_to,
-			"dateDelivered >" => $date_delivered_from,
-			"dateDelivered <" => $date_delivered_to,
+			"lastUpdated >" => $date_approved_from,
+			"lastUpdated <" => $date_approved_to,
 			"orders.orderId" => $order_id,
 			"orders_agents.agentId" => $agent,
-			"orders_beneficiaries.beneficiaryId" => $beneficiary,
-			"clientDonationId" => $donation_id,
 			"client_donations.clientId" => $client_id,
+			"locations.locationId" => $location,
 
 
 		);
