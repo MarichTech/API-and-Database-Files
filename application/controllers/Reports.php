@@ -130,7 +130,42 @@ class Reports extends Base
 			"result" => $result
 		], REST_Controller::HTTP_OK);
 	}
+/**
+	 *
+	 */
+	public function kin_get()
+	{
+		/*get attributes*/
+		$kin_id = $this->input->get('kin_id', TRUE);
+		$gender = $this->input->get('gender', TRUE);
+		$location_id = $this->input->get('location_id', TRUE);
+		$date_registered = $this->input->get('date_registered', TRUE);
+		$date_registered_range = $this->input->get('date_registered_range', TRUE);
+		$date_registered_from = null;
+		$date_registered_to = null;
+		if (!empty($date_registered_range)) {
+			$separate_dates = $this->splitDateRange($date_registered_range);
+			$date_registered_from = $separate_dates[0];
+			$date_registered_to = $separate_dates[1];
+		}
+		$data = array(
+			"kinId" => $kin_id,
+			"gender" => $gender,
+			"dateRegistered" => $date_registered,
+			"dateRegistered>" => $date_registered_from,
+			"dateRegistered<" => $date_registered_to,
+			"kin_locations.locationId" => $location_id,
 
+		);
+
+		/*fetch data from model
+		*/
+		/*fetch data from model*/
+		$result = $result = $this->reports->getKin($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
 	/**
 	 *
 	 */

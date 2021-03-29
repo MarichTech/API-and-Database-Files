@@ -76,6 +76,25 @@ class Reports_model extends CI_Model
 		}
 		return $this->db->get()->result("array");
 	}
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
+	public function getKin($params)
+	{
+		$this->db->select("kin.kinId,kinName,locations.name as locationAddress,gender,mobile,kin.printId,
+		fsName as fingerPrintFileSystemName,kin.locationId
+		,dob,pictureName,identificationNo as national_id	");
+		$this->db->from("kin");
+		$this->db->join("fingerprints","fingerprints.printId =kin.printId","LEFT");
+		$this->db->join("locations","kin.locationId =locations.id","LEFT");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		return $this->db->get()->result("array");
+	}
 
 	/**
 	 * @param $params
