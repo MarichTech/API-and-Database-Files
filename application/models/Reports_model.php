@@ -82,7 +82,7 @@ class Reports_model extends CI_Model
 	 */
 	public function getKin($params)
 	{
-		$this->db->select("kin.kinId,kinName,locations.name as locationAddress,gender,mobile,kin.printId,relationship,
+		$this->db->select("kin.kinId,kin.beneficiaryId,kinName,locations.name as locationAddress,gender,mobile,kin.printId,relationship,
 		fsName as fingerPrintFileSystemName,kin.locationId
 		,dob,pictureName,identificationNo as national_id	");
 		$this->db->from("kin");
