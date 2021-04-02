@@ -137,6 +137,7 @@ class Reports extends Base
 	{
 		/*get attributes*/
 		$kin_id = $this->input->get('kin_id', TRUE);
+		$beneficiary_id = $this->input->get('beneficiary_id', TRUE);
 		$gender = $this->input->get('gender', TRUE);
 		$location_id = $this->input->get('location_id', TRUE);
 		$date_registered = $this->input->get('date_registered', TRUE);
@@ -150,6 +151,7 @@ class Reports extends Base
 		}
 		$data = array(
 			"kinId" => $kin_id,
+			"kin.beneficiaryId" => $beneficiary_id,
 			"gender" => $gender,
 			"dateRegistered" => $date_registered,
 			"dateRegistered>" => $date_registered_from,
