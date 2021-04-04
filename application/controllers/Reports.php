@@ -553,6 +553,13 @@ class Reports extends Base
 			"result" => $result
 		], REST_Controller::HTTP_OK);
 	}
+	public function allusers_get(){
+		$result = $this->reports->getAllUsers();
+		$this->response([
+			"status" => "true",
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
 
 
 }

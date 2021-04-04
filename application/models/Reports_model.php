@@ -104,7 +104,7 @@ class Reports_model extends CI_Model
 	public function getStaff($params){
 		$this->db->select("email,name,userName,mobile,addressLocation,gender,state_identification_type.description as idType,
 		identificationNumber,responsibilities,staff.dateCreated 
-		as dateRegistered, lastModified");
+		as dateRegistered, lastModified,users.groupCode");
 		$this->db->from("staff");
 		$this->db->join("users","users.userId = staff.userId");
 		$this->db->join("state_identification_type","staff.stateIdentificationType = state_identification_type.id");
@@ -162,7 +162,7 @@ class Reports_model extends CI_Model
 	public function getAgents($params){
 		$this->db->select("agentid,name,username,email,mobile,addressLocation,gender,identificationNumber,
 		state_identification_type.description as idType,agents.dateCreated 
-		as dateRegistered, dateModified,addressLocation,gender,users.username,users.passCode");
+		as dateRegistered, dateModified,addressLocation,gender,users.username,users.passCode,users.groupCode");
 		$this->db->from("agents");
 		$this->db->join("users","users.userId = agents.userId");
 		$this->db->join("state_identification_type","agents.stateIdentificationType = state_identification_type.id");
@@ -181,8 +181,7 @@ class Reports_model extends CI_Model
 	 */
 	public function getAdmins($params){
 		$this->db->select("adminId, name,username,email,mobile,addressLocation,gender,identificationNumber,state_identification_type.description as idType,
-		dateCreated 
-		as dateRegistered, dateModified,addressLocation,gender");
+		administrators.dateCreated	as dateRegistered, dateModified,addressLocation,gender,users.groupCode");
 		$this->db->from("administrators");
 		$this->db->join("users","users.userId = administrators.userId");
 		$this->db->join("state_identification_type","administrators.stateIdentificationType = state_identification_type.id");
@@ -337,6 +336,16 @@ class Reports_model extends CI_Model
 		}
 		$result = $this->db->get()->row();
 		return $result->count;
+	}
+
+	public function getAllUsers()
+	{
+		$query = $this->db->query("Select agentId as id, name,email,mobile,addressLocation, gender,stateIdentificationType as idType,identificationNumber, groupCode,
+		dateCreated from agents union all Select adminId as id, name,email,mobile,addressLocation, gender,stateIdentificationType   as idType ,identificationNumber,groupCode,
+		dateCreated from administrators union all Select staffId as id, name,email,mobile,addressLocation, gender,stateIdentificationType   as idType,identificationNumber, groupCode,
+		dateCreated from staff");
+		//$result = $query->result();
+		return $query->result();
 	}
 
 
