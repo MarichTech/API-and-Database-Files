@@ -333,8 +333,13 @@ class Data_operations extends Base
                 "Message" => "Already Uploaded",
             ], REST_Controller::HTTP_OK);
         } else {
-
-            if (move_uploaded_file($_FILES["picture"]["tmp_name"], "$target_dir/$picture")) {
+			//compress image
+			$image = $_FILES["picture"]["tmp_name"];
+			/*$destination = $picture;
+			$destination = $this->compress($image,"$target_dir/$picture",40);
+			var_dump($destination);
+			var_dump($picture);*/
+            if ($this->compress($image,"$target_dir/$picture",40)) {
                 /*Upload Fingerprint*/
                 $beneficiary_fingerprint = $_FILES['fingerprint'];
                 $target_dir = FINGERPRINTS;
@@ -408,7 +413,7 @@ class Data_operations extends Base
             ], REST_Controller::HTTP_OK);
         } else {
 
-            if (move_uploaded_file($_FILES["picture"]["tmp_name"], "$target_dir/$picture")) {
+            if ($this->compress($_FILES["picture"]["tmp_name"],"$target_dir/$picture",40)) {
                 /*Upload Fingerprint*/
                 $kin_fingerprint = $_FILES['fingerprint'];
                 $target_dir = FINGERPRINTS;
