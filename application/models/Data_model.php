@@ -249,7 +249,7 @@ class Data_model extends CI_Model
 			"orderId" =>$order_id
 		);
 		$this->db->set("dateDispatched",$data_orders["dateDispatched"]);
-		$this->db->where("orderId",$data_orders["order_id"]);
+		$this->db->where("orderId",$data_orders["orderId"]);
 		return $this->db->update("orders",$data_orders);
 	}
 

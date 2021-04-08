@@ -44,8 +44,8 @@ class Reports_model extends CI_Model
 		$this->db->join("order_activation_status", "orders.approvalStatus = order_activation_status.id");
 		$this->db->join("orders_locations", "orders.orderId = orders_locations.orderId","LEFT OUTER");
 		$this->db->join("locations", "orders_locations.locationId = locations.id");
-		$this->db->join("orders_agents", "orders_agents.orderId = orders.orderId", "LEFT OUTER");
-		$this->db->join("agents", "orders_agents.agentId = agents.agentId","LEFT OUTER");
+		$this->db->join("orders_beneficiaries_agents", "orders_beneficiaries_agents.orderId = orders.orderId", "LEFT OUTER");
+		$this->db->join("agents", "orders_beneficiaries_agents.agentId = agents.agentId","LEFT OUTER");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
 		$this->db->join("clients", "client_donations.clientId = clients.clientId");

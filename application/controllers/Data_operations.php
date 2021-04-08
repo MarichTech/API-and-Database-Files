@@ -149,55 +149,64 @@ class Data_operations extends Base
 
 	public function assignOrder_post()
 	{
-		$agents = $this->input->post('agents', true);
+		$agents = json_decode($this->input->post('agents', true));
 		$order_id = $this->input->post('order_id', true);
-		$algorithm = $this->input->post('$algorithm', true);
+		$algorithm = $this->input->post('algorithm', true);
+		var_dump($algorithm);
 		$status = false;
 		if($algorithm == "alphabetic") {
 			/*1. Get the order details*/
 			$orderDetails = $this->reports->getOrders($data = array("orders.orderId" => $order_id));
-			/*2. Get all beneficiaries  eligible for the order (Location & group)*/
-			/*Beneficiary groups where clause*/
-			$beneficiary_group_amounts = $this->reports->getBeneficiaryGroupAmounts($orderDetails[0]->orderId);
-			$where_clause = "";
 
-			for ($i = 0; $i < sizeof($beneficiary_group_amounts); $i++) {
-				$beneficiary_group = (array)$beneficiary_group_amounts[$i];
-				if ($i == (sizeof($beneficiary_group_amounts) - 1)) {
-					$where_clause .= "beneficiary_groups.id =" . $beneficiary_group["ben_group_id"] . " ";
-				} else {
-					$where_clause .= "beneficiary_groups.id =" . $beneficiary_group["ben_group_id"] . " OR ";
+			/*2. Check Dispatch*/
+			if (!empty($orderDetails[0]->dateDispatched)) {
+				$status = false;
+			} else {
+
+				/*3. Get all beneficiaries  eligible for the order (Location & group)*/
+				/*Beneficiary groups where clause*/
+				$beneficiary_group_amounts = $this->reports->getBeneficiaryGroupAmounts($orderDetails[0]->orderId);
+				$where_clause = "";
+
+				for ($i = 0; $i < sizeof($beneficiary_group_amounts); $i++) {
+					$beneficiary_group = (array)$beneficiary_group_amounts[$i];
+					if ($i == (sizeof($beneficiary_group_amounts) - 1)) {
+						$where_clause .= "beneficiary_groups.id =" . $beneficiary_group["ben_group_id"] . " ";
+					} else {
+						$where_clause .= "beneficiary_groups.id =" . $beneficiary_group["ben_group_id"] . " OR ";
+					}
 				}
-			}
 
-			$beneficiaries_filters = $data = array(
-				"beneficiary.locationId" => $orderDetails[0]->locationId,
-				"$where_clause " => null,
-			);
-			$beneficiaries = $this->reports->getBeneficiaries($beneficiaries_filters);
-			/*Divide beneficiary array equally to the agents and add relationship*/
-			$ben_count = sizeof($beneficiaries);
-			$agent_count = sizeof($agents);
-			$ben_per_agent = round($ben_count/$agent_count,0);
-			$start =0;
-			$end = $ben_per_agent;
-			$status =  $this->operations->updateDispatchOrder($order_id);
-			for ($j =0;$j<$agents;$j++){
+				$beneficiaries_filters = $data = array(
+					"beneficiary.locationId" => $orderDetails[0]->locationId,
+					"$where_clause " => null,
+				);
+				$beneficiaries = $this->reports->getBeneficiaries($beneficiaries_filters);
+				/*Divide beneficiary array equally to the agents and add relationship*/
+				$ben_count = sizeof($beneficiaries);
+				$agent_count = sizeof($agents);
+				$ben_per_agent = round($ben_count / $agent_count, 0);
+				$start = 0;
+				$end = $ben_per_agent;
+				$status = $this->operations->updateDispatchOrder($order_id);
+				for ($j = 0; $j < $agent_count; $j++) {
 
-				for($i = $start;$i<$end;$i++){
-					$data = array(
-						"order_id" => $order_id,
-						"beneficiary_id" => $beneficiaries[$i]->beneficiaryId,
-						"agent_id"=>$agents[$j]
-					);
-				 $this->operations->assignOrder($data);
-				}
-				if($j == ($agents-1)){
-					$start += $ben_per_agent;
-					$end +=$ben_per_agent;
-				}else {
-					$start += $ben_per_agent;
-					$end = sizeof($beneficiaries);
+					for ($i = $start; $i < $end; $i++) {
+						$data = array(
+							"order_id" => $order_id,
+							"beneficiary_id" => $beneficiaries[$i]["beneficiaryId"],
+							"agent_id" => $agents[$j]
+						);
+						print_r($data);
+						$this->operations->assignOrder($data);
+					}
+					if ($j == ($agent_count - 1)) {
+						$start += $ben_per_agent;
+						$end += $ben_per_agent;
+					} else {
+						$start += $ben_per_agent;
+						$end = sizeof($beneficiaries);
+					}
 				}
 			}
 		}
