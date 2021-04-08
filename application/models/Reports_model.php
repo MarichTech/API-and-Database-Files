@@ -351,5 +351,24 @@ class Reports_model extends CI_Model
 		return $query->result();
 	}
 
+	public function getBenList(array $params)
+	{
+		$this->db->select("beneficiaryName,locations.name as locationAddress,gender,mobile,beneficiary.locationId,
+		,national_id,beneficiary_groups.name as groupName");
+		$this->db->from("orders_beneficiaries_agents");
+		$this->db->join("beneficiary","orders_beneficiaries_agents.beneficiaryId =beneficiary.beneficiaryId","LEFT");
+		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
+		$this->db->join("beneficiary_groups","beneficiary.beneficiaryGroupId =beneficiary_groups.id","LEFT");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}else{
+				$this->db->where("$key");
+			}
+		}
+		$this->db->order_by("beneficiaryName","ASC");
+		return $this->db->get()->result("array");
+	}
+
 
 }

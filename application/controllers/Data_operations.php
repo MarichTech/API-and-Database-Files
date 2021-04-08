@@ -152,7 +152,6 @@ class Data_operations extends Base
 		$agents = json_decode($this->input->post('agents', true));
 		$order_id = $this->input->post('order_id', true);
 		$algorithm = $this->input->post('algorithm', true);
-		var_dump($algorithm);
 		$status = false;
 		if($algorithm == "alphabetic") {
 			/*1. Get the order details*/
@@ -197,7 +196,7 @@ class Data_operations extends Base
 							"beneficiary_id" => $beneficiaries[$i]["beneficiaryId"],
 							"agent_id" => $agents[$j]
 						);
-						print_r($data);
+					//	print_r($data);
 						$this->operations->assignOrder($data);
 					}
 					if ($j == ($agent_count - 1)) {
@@ -228,7 +227,7 @@ class Data_operations extends Base
 			$user_name = $_SERVER['PHP_AUTH_USER'];
 			$this->createTrail($action, $user_name, $status);
 			$this->response([
-				"result" => "false",
+				"status" => "false",
 				"message" => "Order is probably already assigned",
 			], REST_Controller::HTTP_BAD_REQUEST);
 
@@ -650,4 +649,6 @@ class Data_operations extends Base
 
 		}
 	}
+
+
 }
