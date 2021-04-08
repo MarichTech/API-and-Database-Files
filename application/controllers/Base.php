@@ -11,6 +11,7 @@ class Base extends REST_Controller
 		parent::__construct($config);
 		$this->load->library("bcrypt");
 		$this->load->model("data_model", "operations");
+		$this->load->model("reports_model", "reports");
 
 	}
 

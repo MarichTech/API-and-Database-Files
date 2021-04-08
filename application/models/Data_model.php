@@ -223,28 +223,33 @@ class Data_model extends CI_Model
 	 * @param $data
 	 * @return bool
 	 */
-	public function linkOrder($data)
+	public function assignOrder($data)
 	{
 
-		$this->db->select("*");
+		/*$this->db->select("*");
 		$this->db->from("orders_agents");
 		$this->db->where("orderId",$data["order_id"]);
 		$num_rows = $this->db->get()->num_rows();
 		if($num_rows >0){
 			return false;
-		}
-		$order_agents = array(
+		}*/
+		$orders_beneficiary_agents = array(
 			"orderId" =>$data["order_id"],
-			"agentId" =>$data["agent_id"]
+			"agentId" =>$data["agent_id"],
+			"beneficiaryId" =>$data["beneficiary_id"]
 
 		);
-		$this->db->insert("orders_agents",$order_agents);
+		return $this->db->insert("orders_beneficiaries_agents",$orders_beneficiary_agents);
+
+	}
+	public function updateDispatchOrder($order_id){
 		//update dispatch data
 		$data_orders = array(
-			"dateDispatched" =>date("Y-m-d H:i:s")
+			"dateDispatched" =>date("Y-m-d H:i:s"),
+			"orderId" =>$order_id
 		);
 		$this->db->set("dateDispatched",$data_orders["dateDispatched"]);
-		$this->db->where("orderId",$data["order_id"]);
+		$this->db->where("orderId",$data_orders["order_id"]);
 		return $this->db->update("orders",$data_orders);
 	}
 

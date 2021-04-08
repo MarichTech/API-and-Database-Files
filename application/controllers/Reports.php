@@ -16,8 +16,6 @@ class Reports extends Base
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
-
-		$this->load->model("Reports_model", "reports");
 	}
 
 	/**

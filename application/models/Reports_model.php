@@ -73,8 +73,11 @@ class Reports_model extends CI_Model
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
+			}else{
+				$this->db->where("$key");
 			}
 		}
+		$this->db->order_by("beneficiaryName","ASC");
 		return $this->db->get()->result("array");
 	}
 	/**
