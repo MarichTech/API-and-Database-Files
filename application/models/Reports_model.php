@@ -37,15 +37,14 @@ class Reports_model extends CI_Model
 	{
 		$this->db->select("orders.orderId,client_donations.grantName,locations.id as locationId,locations.name as locationName,amount,
 		order_activation_status.id as statusCode,order_activation_status.description as activationStatus,
-		orders.dateCreated,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName,
-		 agents.agentId, 
+		orders.dateCreated,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,
 		clients.name as clientName, clients.clientId as clientId");
 		$this->db->from("orders");
 		$this->db->join("order_activation_status", "orders.approvalStatus = order_activation_status.id");
 		$this->db->join("orders_locations", "orders.orderId = orders_locations.orderId","LEFT OUTER");
 		$this->db->join("locations", "orders_locations.locationId = locations.id");
-		$this->db->join("orders_beneficiaries_agents", "orders_beneficiaries_agents.orderId = orders.orderId", "LEFT OUTER");
-		$this->db->join("agents", "orders_beneficiaries_agents.agentId = agents.agentId","LEFT OUTER");
+	/*	$this->db->join("orders_beneficiaries_agents", "orders_beneficiaries_agents.orderId = orders.orderId", "LEFT OUTER");
+		$this->db->join("agents", "orders_beneficiaries_agents.agentId = agents.agentId","LEFT OUTER");*/
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
 		$this->db->join("clients", "client_donations.clientId = clients.clientId");
