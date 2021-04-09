@@ -189,8 +189,27 @@ class Data_operations extends Base
 				$end = $ben_per_agent;
 				$status = $this->operations->updateDispatchOrder($order_id);
 				for ($j = 0; $j < $agent_count; $j++) {
+/*
+					echo " Debug <br>";
+					echo "  <br>";
+					echo " Agent Id : $agents[$j] <br>";
+					echo " Start : $start <br>";
+					echo " End : $end <br>";
+					echo " Ben Count : $ben_count <br>";
+					echo " Agent Count : $agent_count <br>";
+					echo " Ben per Agent : $ben_per_agent <br>";
+					echo "  <br>";*/
 
 					for ($i = $start; $i < $end; $i++) {
+						/*echo " Debug Inner <br>";
+						echo "  <br>";
+						echo " Start : $start <br>";
+						echo " End : $end <br>";
+						echo " i : $i <br>";
+
+						echo "  <br>";*/
+
+
 						$data = array(
 							"order_id" => $order_id,
 							"beneficiary_id" => $beneficiaries[$i]["beneficiaryId"],
@@ -199,12 +218,12 @@ class Data_operations extends Base
 					//	print_r($data);
 						$this->operations->assignOrder($data);
 					}
-					if ($j == ($agent_count - 1)) {
+					if ($j == ($agent_count - 2)) {
 						$start += $ben_per_agent;
-						$end += $ben_per_agent;
+						$end = sizeof($beneficiaries);;
 					} else {
 						$start += $ben_per_agent;
-						$end = sizeof($beneficiaries);
+						$end += $ben_per_agent;
 					}
 				}
 			}
