@@ -560,13 +560,25 @@ class Reports extends Base
 	}
 	public function beneficiariesList_get(){
 		$agent_id = $this->input->get('agent_id', TRUE);
+		$order_id = $this->input->get('order_id', TRUE);
 		$agent = $this->reports->getAgents($data=array("agentId"=>$agent_id));
-		$beneficiaries = $this->reports->getBenList($data=array("orders_beneficiaries_agents.agentId"=>$agent_id));
+		$data=array(
+			"orders_beneficiaries_agents.agentId"=>$agent_id,
+			"orders_beneficiaries_agents.orderId"=>$order_id,
+		);
+		$beneficiaries = $this->reports->getBenList($data);
+		if(isset($beneficiaries[0])){
+			$firstAlphabet =substr($beneficiaries[0]["beneficiaryName"],0,1);
+			$lastAlphabet=substr($beneficiaries[sizeof($beneficiaries)-1]["beneficiaryName"],0,1);
+		}else{
+			$firstAlphabet = "not set";
+			$lastAlphabet = "not set";
+		}
 		$this->response([
 			"status" => "true",
 			"agentName" => $agent[0]["name"],
-			"firstAlphabet"=>substr($beneficiaries[0]["beneficiaryName"],0,1),
-			"lastAlphabet"=>substr($beneficiaries[sizeof($beneficiaries)-1]["beneficiaryName"],0,1),
+			"firstAlphabet"=>$firstAlphabet,
+			"lastAlphabet"=>$lastAlphabet,
 			"beneficiaries"=>$beneficiaries
 		], REST_Controller::HTTP_OK);
 	}
