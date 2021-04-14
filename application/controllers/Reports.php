@@ -583,4 +583,19 @@ class Reports extends Base
 		], REST_Controller::HTTP_OK);
 	}
 
+	public function beneficiariesListForVerification_get(){
+		$agent_id = $this->input->get('agent_id', TRUE);
+		$order_id = $this->input->get('order_id', TRUE);
+		$data=array(
+			"orders_beneficiaries_agents.agentId"=>$agent_id,
+			"orders_beneficiaries_agents.orderId"=>$order_id,
+		);
+
+
+		$result = $result = $this->reports->getBenListForVerification($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+
 }

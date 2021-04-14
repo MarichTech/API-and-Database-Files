@@ -368,6 +368,25 @@ class Reports_model extends CI_Model
 		$this->db->order_by("beneficiaryName","ASC");
 		return $this->db->get()->result("array");
 	}
+	function getBenListForVerification($params){
+
+		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,locations.name as locationAddress,gender,email,mobile,printId,
+		fsName as fingerPrintFileSystemName,beneficiary.locationId,locations.name
+		,dob,pictureName,national_id,beneficiaryGroupId,beneficiary_groups.name as groupName");
+		$this->db->from("orders_beneficiaries_agents");
+		$this->db->join("beneficiary","orders_beneficiaries_agents.beneficiaryId =beneficiary.beneficiaryId","LEFT");
+		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT");
+		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
+		$this->db->join("beneficiary_groups","beneficiary.beneficiaryGroupId =beneficiary_groups.id","LEFT");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		$this->db->order_by("beneficiaryName","ASC");
+		$this->db->group_by("beneficiary.beneficiaryId");
+		return $this->db->get()->result("array");
+	}
 
 
 }
