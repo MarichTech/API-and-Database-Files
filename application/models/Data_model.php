@@ -190,18 +190,139 @@ class Data_model extends CI_Model
 
 	/**
 	 * @param $data
-	 * @return int
+	 * @return int/bool
 	 */
 	private function addUser($data){
-		$users_table = array(
-			"groupCode"=>$data["groupCode"],
-			"userName" => $data["userName"],
-			"passCode" => $data["password"],
+
+		$this->db->select("userName");
+		$this->db->from("users");
+		$this->db->where("userName",$data["userName"]);
+		$count = $this->db->get()->num_rows();
+		if($count < 1 ){
+			$users_table = array(
+				"groupCode"=>$data["groupCode"],
+				"userName" => $data["userName"],
+				"passCode" => $data["password"],
+			);
+			$this->db->insert("users",$users_table);
+			return $this->db->insert_id();
+		}else{
+			return false;
+		}
+
+	}
+	public function updateStaff(array $data)
+	{
+		$id=$data["id"];
+		$staff_table = array(
+			"name" => $data["name"],
+			"email" =>$data["email"],
+			"mobile" => $data["mobile"],
+			"addressLocation" => $data["addressLocation"],
+			"gender" => $data["gender"],
+			"stateIdentificationType" => $data["stateIdentificationType"],
+			"identificationNumber" =>$data["identificationNumber"],
+			"groupCode" => $data["groupCode"],
+			"responsibilities" => $data["groupCode"],
+			"dateCreated" => date("Y-m-d H:i:s"),
+			"lastModified" => date("Y-m-d H:i:s"),
+
+
 		);
-		$this->db->insert("users",$users_table);
-		return $this->db->insert_id();
+		$update_array = array();
+		foreach ($staff_table as $key => $value) {
+			if ($value != null) {
+				$update_array[$key] = $value;
+				$this->db->set("$key", $value);
+			}
+		}
+		$this->db->where("staffId",$id);
+		return $this->db->update("staff",$update_array);
 	}
 
+	public function updateAgent(array $data)
+	{
+		$id=$data["id"];
+		$agents_table = array(
+
+			"name" => $data["name"],
+			"email" =>$data["email"],
+			"mobile" => $data["mobile"],
+			"addressLocation" => $data["addressLocation"],
+			"gender" => $data["gender"],
+			"stateIdentificationType" => $data["stateIdentificationType"],
+			"identificationNumber" =>$data["identificationNumber"],
+			"groupCode" => $data["groupCode"],
+			"dateCreated" => date("Y-m-d H:i:s"),
+			"dateModified" => date("Y-m-d H:i:s"),
+
+
+		);
+		var_dump($agents_table);
+		$update_array = array();
+		foreach ($agents_table as $key => $value) {
+			if ($value != null) {
+				$update_array[$key] = $value;
+				$this->db->set("$key", $value);
+			}
+		}
+		$this->db->where("agentId",$id);
+		return $this->db->update("agents",$update_array);
+	}
+
+	public function updateAdmin(array $data)
+	{
+		$id=$data["id"];
+		$admin_table = array(
+
+			"name" => $data["name"],
+			"email" =>$data["email"],
+			"mobile" => $data["mobile"],
+			"addressLocation" => $data["addressLocation"],
+			"gender" => $data["gender"],
+			"stateIdentificationType" => $data["stateIdentificationType"],
+			"identificationNumber" =>$data["identificationNumber"],
+			"groupCode" => $data["groupCode"],
+			"dateCreated" => date("Y-m-d H:i:s"),
+			"dateModified" => date("Y-m-d H:i:s"),
+
+
+		);
+		$update_array = array();
+		foreach ($admin_table as $key => $value) {
+			if ($value != null) {
+				$update_array[$key] = $value;
+				$this->db->set("$key", $value);
+			}
+		}
+		$this->db->where("adminId",$id);
+		return $this->db->update("administrators",$update_array);
+	}
+
+	public function updateClient(array $data)
+	{
+		$id=$data["id"];
+		$clients_table = array(
+
+			"name" => $data["name"],
+			"repEmail" => $data["repEmail"],
+			"repMobile" => $data["repMobile"],
+			"groupCode"=>$data["groupCode"],
+			"addressLocation" => $data["addressLocation"],
+			"descriptions" => $data["descriptions"],
+			"dateCreated" => date("Y-m-d H:i:s"),
+
+		);
+		$update_array = array();
+		foreach ($clients_table as $key => $value) {
+			if ($value != null) {
+				$update_array[$key] = $value;
+				$this->db->set("$key", $value);
+			}
+		}
+		$this->db->where("clientId",$id);
+		return $this->db->update("clients",$update_array);
+	}
 	/**
 	 * @param $data
 	 * @return bool
@@ -395,4 +516,8 @@ class Data_model extends CI_Model
     	$this->db->where("orderId",$data["order_id"]);
     	return $this->db->update("orders",$dataUpdate);
     }
+
+
+
+
 }

@@ -255,6 +255,8 @@ class Data_operations extends Base
 
 	/*Users*/
 	/*Password is */
+
+	//todo check duplicates of usernames
 	public function createUser_post()
 	{
 		$group_code = $this->input->post('groupCode', true);
@@ -323,7 +325,7 @@ class Data_operations extends Base
 				$this->createTrail($action, $user_name, $status);
 				$this->response([
 					"result" => "false",
-					"Message" => "Existing username or broken input",
+					"message" => "Existing username or broken input",
 				], REST_Controller::HTTP_BAD_REQUEST);
 
 			}
@@ -333,7 +335,82 @@ class Data_operations extends Base
 
 	public function updateUser_post()
 	{
+		$group_code = $this->input->post('groupCode', true);
+		$id = $this->input->post('id', true);
 
+		if (empty($group_code)) {
+			$this->response([
+				"status" => "false",
+				"message" => "Group code invalid or missing",
+			], REST_Controller::HTTP_BAD_REQUEST);
+		} else {
+			$status = false;
+			switch ($group_code) {
+
+				case "003":
+					$data = array(
+						"groupCode" => $group_code,
+						"id" => $id,
+						"name" => $this->input->post('name', true),
+						"repEmail" => $this->input->post('repEmail', true),
+						"repMobile" => $this->input->post('repMobile', true),
+						"addressLocation" => $this->input->post('addressLocation', true),
+						"descriptions" => $this->input->post('descriptions', true),
+						"userName" => $this->input->post('userName', true),
+						"password" => $this->bcrypt->hash($this->input->post('password', true)),
+					);
+					$status = $this->operations->updateClient($data);
+					break;
+				default:
+					$data = array(
+						"groupCode" => $group_code,
+						"id" => $id,
+						"name" => $this->input->post('name', true),
+						"email" => $this->input->post('email', true),
+						"mobile" => $this->input->post('mobile', true),
+						"addressLocation" => $this->input->post('addressLocation', true),
+						"gender" => $this->input->post('gender', true),
+						"stateIdentificationType" => $this->input->post('stateIdentificationType', true),
+						"identificationNumber" => $this->input->post('identificationNumber', true),
+						"responsibilities" => $this->input->post('responsibilities', true),
+						"userName" => $this->input->post('userName', true),
+						"password" => $this->bcrypt->hash($this->input->post('password', true)),
+					);
+					switch ($group_code) {
+						case "001":
+							$status = $this->operations->updateStaff($data);
+							break;
+						case "002":
+							$status = $this->operations->updateAgent($data);
+							break;
+						case "004":
+							$status = $this->operations->updateAdmin($data);
+					}
+
+			}
+			if ($status == true) {
+				$action = "Update User";
+				$status = "Success";
+				$user_name = $_SERVER['PHP_AUTH_USER'];
+				$this->createTrail($action, $user_name, $status);
+				$this->response([
+					"status" => "true",
+					"message" => "User Updated successfully",
+				], REST_Controller::HTTP_CREATED);
+
+			} else {
+				$action = "Update User";
+				$status = "Fail";
+				$user_name = $_SERVER['PHP_AUTH_USER'];
+				$this->createTrail($action, $user_name, $status);
+				$this->response([
+					"result" => "false",
+					"message" => "Failed Updating User",
+				], REST_Controller::HTTP_BAD_REQUEST);
+
+			}
+
+		}
 	}
 
 	public function updateClients_post()
@@ -373,7 +450,7 @@ class Data_operations extends Base
 			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
-				"Message" => "An error occured",
+				"message" => "An error occured",
 			], REST_Controller::HTTP_BAD_REQUEST);
 
 		}
@@ -407,7 +484,7 @@ class Data_operations extends Base
 		if ($status == true) {
 			$this->response([
 				"result" => "false",
-				"Message" => "Already Uploaded",
+				"message" => "Already Uploaded",
 			], REST_Controller::HTTP_OK);
 		} else {
 			//compress image
@@ -446,20 +523,20 @@ class Data_operations extends Base
 					$status = $this->operations->newBeneficiary($data);
 					$this->response([
 						"result" => "true",
-						"Message" => "Beneficiary Uploaded",
+						"message" => "Beneficiary Uploaded",
 					], REST_Controller::HTTP_CREATED);
 
 				} else {
 					$this->response([
 						"result" => "false",
-						"Message" => "Could not upload fingerprint",
+						"message" => "Could not upload fingerprint",
 					], REST_Controller::HTTP_BAD_REQUEST);
 
 				}
 			} else {
 				$this->response([
 					"result" => "false",
-					"Message" => "Could not upload Picture",
+					"message" => "Could not upload Picture",
 				], REST_Controller::HTTP_BAD_REQUEST);
 
 			}
@@ -487,7 +564,7 @@ class Data_operations extends Base
 		if ($status == true) {
 			$this->response([
 				"result" => "false",
-				"Message" => "Already Uploaded",
+				"message" => "Already Uploaded",
 			], REST_Controller::HTTP_OK);
 		} else {
 
@@ -518,20 +595,20 @@ class Data_operations extends Base
 					$status = $this->operations->newKin($data);
 					$this->response([
 						"result" => "true",
-						"Message" => "Kin Uploaded",
+						"message" => "Kin Uploaded",
 					], REST_Controller::HTTP_CREATED);
 
 				} else {
 					$this->response([
 						"result" => "false",
-						"Message" => "Could not upload fingerprint",
+						"message" => "Could not upload fingerprint",
 					], REST_Controller::HTTP_BAD_REQUEST);
 
 				}
 			} else {
 				$this->response([
 					"result" => "false",
-					"Message" => "Could not upload Picture",
+					"message" => "Could not upload Picture",
 				], REST_Controller::HTTP_BAD_REQUEST);
 
 			}
@@ -566,12 +643,12 @@ class Data_operations extends Base
 		if (status == false) {
 			$this->response([
 				"result" => "true",
-				"Message" => "Transaction Was already updated",
+				"message" => "Transaction Was already updated",
 			], REST_Controller::HTTP_ALREADY_REPORTED);
 		} else {
 			$this->response([
 				"result" => "true",
-				"Message" => "Transaction Uploaded",
+				"message" => "Transaction Uploaded",
 			], REST_Controller::HTTP_CREATED);
 		}
 	}
@@ -603,7 +680,7 @@ class Data_operations extends Base
 			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
-				"Message" => "An error occured",
+				"message" => "An error occured",
 			], REST_Controller::HTTP_BAD_REQUEST);
 
 		}
@@ -636,7 +713,7 @@ class Data_operations extends Base
 			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
-				"Message" => "An error occured",
+				"message" => "An error occured",
 			], REST_Controller::HTTP_BAD_REQUEST);
 
 		}
@@ -663,7 +740,7 @@ class Data_operations extends Base
 			$this->createTrail($action, $user_name, $status);
 			$this->response([
 				"result" => "false",
-				"Message" => "An error occured",
+				"message" => "An error occured",
 			], REST_Controller::HTTP_NO_CONTENT);
 
 		}
