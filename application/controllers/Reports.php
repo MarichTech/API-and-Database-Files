@@ -185,7 +185,7 @@ class Reports extends Base
 			$date_registered_to = $separate_dates[1];
 		}
 		$data = array(
-			"staff_id" => $staff_id,
+			"staffId" => $staff_id,
 			"gender" => $gender,
 			"identificationNumber" => $identification_number,
 			"dateCreated" => $date_created,

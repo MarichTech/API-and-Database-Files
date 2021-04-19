@@ -258,7 +258,6 @@ class Data_model extends CI_Model
 
 
 		);
-		var_dump($agents_table);
 		$update_array = array();
 		foreach ($agents_table as $key => $value) {
 			if ($value != null) {
@@ -310,7 +309,7 @@ class Data_model extends CI_Model
 			"groupCode"=>$data["groupCode"],
 			"addressLocation" => $data["addressLocation"],
 			"descriptions" => $data["descriptions"],
-			"dateCreated" => date("Y-m-d H:i:s"),
+			//"dateCreated" => date("Y-m-d H:i:s"),
 
 		);
 		$update_array = array();
@@ -516,8 +515,82 @@ class Data_model extends CI_Model
     	$this->db->where("orderId",$data["order_id"]);
     	return $this->db->update("orders",$dataUpdate);
     }
+    public function deleteUser($userId){
+		$this->db->where("userId",$userId);
+		return $this->db->delete("users");
+	}
 
+	public function deleteAgent($id)
+	{
+		$this->db->select("userId");
+		$this->db->from("agents");
+		$this->db->where("agentId",$id);
 
+		$result = $this->db->get()->row();
+		$userId = $result->userId;
+		$status = $this->deleteUser($userId);
+
+		if($status){
+			$this->db->where("agentId",$id);
+			return $this->db->delete("agents");
+		}else{
+			return false;
+		}
+	}
+
+	public function deleteClient($id)
+	{
+		$this->db->select("userId");
+		$this->db->from("clients");
+		$this->db->where("clientId",$id);
+
+		$result = $this->db->get()->row();
+		$userId = $result->userId;
+		$status = $this->deleteUser($userId);
+
+		if($status){
+			$this->db->where("clientId",$id);
+			return $this->db->delete("clients");
+		}else{
+			return false;
+		}
+	}
+
+	public function deleteStaff($id)
+	{
+		$this->db->select("userId");
+		$this->db->from("staff");
+		$this->db->where("staffId",$id);
+
+		$result = $this->db->get()->row();
+		$userId = $result->userId;
+		$status = $this->deleteUser($userId);
+
+		if($status){
+			$this->db->where("staffId",$id);
+			return $this->db->delete("staff");
+		}else{
+			return false;
+		}
+	}
+
+	public function deleteAdmin($id)
+	{
+		$this->db->select("userId");
+		$this->db->from("administrators");
+		$this->db->where("adminId",$id);
+
+		$result = $this->db->get()->row();
+		$userId = $result->userId;
+		$status = $this->deleteUser($userId);
+
+		if($status){
+			$this->db->where("adminId",$id);
+			return $this->db->delete("administrators");
+		}else{
+			return false;
+		}
+	}
 
 
 }

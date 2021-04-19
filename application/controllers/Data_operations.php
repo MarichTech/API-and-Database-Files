@@ -153,7 +153,7 @@ class Data_operations extends Base
 		$order_id = $this->input->post('order_id', true);
 		$algorithm = $this->input->post('algorithm', true);
 		$status = false;
-		if($algorithm == "alphabetic") {
+		if ($algorithm == "alphabetic") {
 			/*1. Get the order details*/
 			$orderDetails = $this->reports->getOrders($data = array("orders.orderId" => $order_id));
 
@@ -189,16 +189,16 @@ class Data_operations extends Base
 				$end = $ben_per_agent;
 				$status = $this->operations->updateDispatchOrder($order_id);
 				for ($j = 0; $j < $agent_count; $j++) {
-/*
-					echo " Debug <br>";
-					echo "  <br>";
-					echo " Agent Id : $agents[$j] <br>";
-					echo " Start : $start <br>";
-					echo " End : $end <br>";
-					echo " Ben Count : $ben_count <br>";
-					echo " Agent Count : $agent_count <br>";
-					echo " Ben per Agent : $ben_per_agent <br>";
-					echo "  <br>";*/
+					/*
+										echo " Debug <br>";
+										echo "  <br>";
+										echo " Agent Id : $agents[$j] <br>";
+										echo " Start : $start <br>";
+										echo " End : $end <br>";
+										echo " Ben Count : $ben_count <br>";
+										echo " Agent Count : $agent_count <br>";
+										echo " Ben per Agent : $ben_per_agent <br>";
+										echo "  <br>";*/
 
 					for ($i = $start; $i < $end; $i++) {
 						/*echo " Debug Inner <br>";
@@ -215,7 +215,7 @@ class Data_operations extends Base
 							"beneficiary_id" => $beneficiaries[$i]["beneficiaryId"],
 							"agent_id" => $agents[$j]
 						);
-					//	print_r($data);
+						//	print_r($data);
 						$this->operations->assignOrder($data);
 					}
 					if ($j == ($agent_count - 2)) {
@@ -230,8 +230,7 @@ class Data_operations extends Base
 		}
 
 
-
-        if ($status == true) {
+		if ($status == true) {
 			$action = "Assign Order";
 			$status = "Success";
 			$user_name = $_SERVER['PHP_AUTH_USER'];
@@ -251,7 +250,7 @@ class Data_operations extends Base
 			], REST_Controller::HTTP_BAD_REQUEST);
 
 		}
-    }
+	}
 
 	/*Users*/
 	/*Password is */
@@ -356,8 +355,6 @@ class Data_operations extends Base
 						"repMobile" => $this->input->post('repMobile', true),
 						"addressLocation" => $this->input->post('addressLocation', true),
 						"descriptions" => $this->input->post('descriptions', true),
-						"userName" => $this->input->post('userName', true),
-						"password" => $this->bcrypt->hash($this->input->post('password', true)),
 					);
 					$status = $this->operations->updateClient($data);
 					break;
@@ -373,8 +370,6 @@ class Data_operations extends Base
 						"stateIdentificationType" => $this->input->post('stateIdentificationType', true),
 						"identificationNumber" => $this->input->post('identificationNumber', true),
 						"responsibilities" => $this->input->post('responsibilities', true),
-						"userName" => $this->input->post('userName', true),
-						"password" => $this->bcrypt->hash($this->input->post('password', true)),
 					);
 					switch ($group_code) {
 						case "001":
@@ -417,6 +412,49 @@ class Data_operations extends Base
 	{
 
 	}
+
+	public function deleteUser_delete()
+	{
+		$usertype = $this->input->get("user_type");
+		$id = $this->input->get("id");
+		switch ($usertype) {
+			case "agent":
+				$status = $this->operations->deleteAgent($id);
+				break;
+			case "client":
+				$status = $this->operations->deleteClient($id);
+				break;
+			case "staff" :
+				$status = $this->operations->deleteStaff($id);
+				break;
+			case "admin":
+				$status = $this->operations->deleteAdmin($id);
+				break;
+		}
+		if ($status) {
+			$action = "Delete" . $usertype;
+			$status = "Success";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action, $user_name, $status);
+			$this->response([
+				"result" => "true",
+				"message" => "Success",
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+
+		} else {
+			$action = "Delete" . $usertype;
+			$status = "Fail";
+			$user_name = $_SERVER['PHP_AUTH_USER'];
+			$this->createTrail($action, $user_name, $status);
+			$this->response([
+				"result" => "false",
+				"message" => "Failed Deleting User",
+			], REST_Controller::HTTP_BAD_REQUEST);
+
+		}
+	}
+
 
 	/*Donations*/
 	public function createDonation_post()
