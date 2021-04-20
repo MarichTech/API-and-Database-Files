@@ -68,12 +68,12 @@ class Reports extends Base
 		}
 		$data = array(
 			"approvalStatus" => $approval_status,
-			"dateCreated" => $date_created,
-			"lastUpdated" => $date_approved,
-			"dateCreated >" => $date_created_from,
-			"dateCreated <" => $date_created_to,
-			"lastUpdated >" => $date_approved_from,
-			"lastUpdated <" => $date_approved_to,
+			"orders.dateCreated" => $date_created,
+			"orders.lastUpdated" => $date_approved,
+			"orders.dateCreated >=" => $date_created_from,
+			"orders.dateCreated <=" => $date_created_to,
+			"orders.lastUpdated >=" => $date_approved_from,
+			"orders.lastUpdated <=" => $date_approved_to,
 			"orders.orderId" => $order_id,
 			"orders_agents.agentId" => $agent,
 			"client_donations.clientId" => $client_id,
@@ -286,9 +286,9 @@ class Reports extends Base
 			"agentId" => $agent_id,
 			"gender" => $gender,
 			"identificationNumber" => $identification_number,
-			"dateCreated" => $date_created,
-			"dateCreated>" => $date_registered_from,
-			"dateCreated<" => $date_registered_to,
+			"agents.dateCreated" => $date_created,
+			"agents.dateCreated>" => $date_registered_from,
+			"agents.dateCreated<" => $date_registered_to,
 		);
 
 		/*fetch data from model
@@ -452,8 +452,8 @@ class Reports extends Base
 		}
 		$data = array(
 			"time_of_transaction" => $date,
-			"time_of_transaction >" => $date_from,
-			"time_of_transaction <" => $date_to,
+			"time_of_transaction >=" => $date_from,
+			"time_of_transaction <=" => $date_to,
 			"t.agent_id" => $agent_id,
 			"t.beneficiary_id" => $beneficiary_id,
 			"t.order_id" => $order_id,

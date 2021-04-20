@@ -224,7 +224,6 @@ class Data_model extends CI_Model
 			"identificationNumber" =>$data["identificationNumber"],
 			"groupCode" => $data["groupCode"],
 			"responsibilities" => $data["groupCode"],
-			"dateCreated" => date("Y-m-d H:i:s"),
 			"lastModified" => date("Y-m-d H:i:s"),
 
 
@@ -253,7 +252,6 @@ class Data_model extends CI_Model
 			"stateIdentificationType" => $data["stateIdentificationType"],
 			"identificationNumber" =>$data["identificationNumber"],
 			"groupCode" => $data["groupCode"],
-			"dateCreated" => date("Y-m-d H:i:s"),
 			"dateModified" => date("Y-m-d H:i:s"),
 
 
@@ -282,7 +280,6 @@ class Data_model extends CI_Model
 			"stateIdentificationType" => $data["stateIdentificationType"],
 			"identificationNumber" =>$data["identificationNumber"],
 			"groupCode" => $data["groupCode"],
-			"dateCreated" => date("Y-m-d H:i:s"),
 			"dateModified" => date("Y-m-d H:i:s"),
 
 

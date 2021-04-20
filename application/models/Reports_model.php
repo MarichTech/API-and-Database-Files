@@ -312,9 +312,10 @@ class Reports_model extends CI_Model
 		$this->db->join("locations","orders_locations.locationId = locations.id");
 		foreach ($data as $key => $value) {
 			if ($value != null) {
-					$this->db->where("$key", $value);
+					$this->db->where("$key", "$value");
 			}
 		}
+		//print_r($result);
 		return $this->db->get()->result();
 	}
 	public function getTransactionForGraph($data){
