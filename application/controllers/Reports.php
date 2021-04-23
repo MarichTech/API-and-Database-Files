@@ -77,7 +77,7 @@ class Reports extends Base
 			"orders.orderId" => $order_id,
 			"orders_agents.agentId" => $agent,
 			"client_donations.clientId" => $client_id,
-			"locations.locationId" => $location,
+			"locations.id" => $location,
 
 
 		);

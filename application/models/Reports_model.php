@@ -69,6 +69,7 @@ class Reports_model extends CI_Model
 		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT");
 		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
 		$this->db->join("beneficiary_groups","beneficiary.beneficiaryGroupId =beneficiary_groups.id","LEFT");
+		$this->db->join("beneficiary_location","beneficiary.beneficiaryId =beneficiary_location.beneficiaryId","LEFT");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
