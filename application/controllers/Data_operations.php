@@ -679,6 +679,7 @@ class Data_operations extends Base
 			"agent_id" => $agent_id
 
 		);
+		//print_r($data);
 		$status = $this->operations->newTransaction($data);
 		if ($status == false) {
 			$this->response([
