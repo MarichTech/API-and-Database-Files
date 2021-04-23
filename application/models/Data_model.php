@@ -439,7 +439,7 @@ class Data_model extends CI_Model
 		$this->db->where("time_of_transaction",$data["time_of_transaction"]);
 		$this->db->where("order_id",$data["order_id"]);
 		$count = $this->db->get()->num_rows();
-		if(count >0){
+		if($count >0){
 			return false;
 		}else{
 		return 		$this->db->insert("transactions",$data);

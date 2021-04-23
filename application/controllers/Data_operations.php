@@ -664,6 +664,7 @@ class Data_operations extends Base
 		$latitude = $this->input->post("latitude");
 		$amount = $this->input->post("amount");
 		$time_of_transaction = $this->input->post("time_of_transaction");
+		$agent_id = $this->input->post("agent_id");
 		$data = array(
 
 			"beneficiary_id" => $beneficiary_id,
@@ -675,6 +676,7 @@ class Data_operations extends Base
 			"amount" => $amount,
 			"time_of_transaction" => $time_of_transaction,
 			"date_uploaded" => date("Y-m-d H:i:s"),
+			"agent_id" => $agent_id
 
 		);
 		$status = $this->operations->newTransaction($data);
