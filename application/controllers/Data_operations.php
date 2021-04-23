@@ -681,11 +681,11 @@ class Data_operations extends Base
 		);
 		//print_r($data);
 		$status = $this->operations->newTransaction($data);
-		if ($status == false) {
+		if (!$status) {
 			$this->response([
 				"result" => "true",
 				"message" => "Transaction Was already updated",
-			], REST_Controller::HTTP_ALREADY_REPORTED);
+			], REST_Controller::HTTP_BAD_REQUEST);
 		} else {
 			$this->response([
 				"result" => "true",
