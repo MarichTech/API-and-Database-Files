@@ -680,7 +680,7 @@ class Data_operations extends Base
 
 		);
 		$status = $this->operations->newTransaction($data);
-		if (status == false) {
+		if ($status == false) {
 			$this->response([
 				"result" => "true",
 				"message" => "Transaction Was already updated",
