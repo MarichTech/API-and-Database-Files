@@ -111,11 +111,11 @@ class Reports extends Base
 			$date_registered_to = $separate_dates[1];
 		}
 		$data = array(
-			"beneficiaryId" => $beneficiary_id,
+			"beneficiary.beneficiaryId" => $beneficiary_id,
 			"gender" => $gender,
-			"dateRegistered" => $date_registered,
-			"dateRegistered>" => $date_registered_from,
-			"dateRegistered<" => $date_registered_to,
+			"beneficiary.dateRegistered" => $date_registered,
+			"beneficiary.dateRegistered>" => $date_registered_from,
+			"beneficiary.dateRegistered<" => $date_registered_to,
 			"beneficiary_location.locationId" => $location_id,
 
 		);
