@@ -16,8 +16,6 @@ class Reports extends Base
 	public function __construct($config = 'rest')
 	{
 		parent::__construct($config);
-
-		$this->load->model("Reports_model", "reports");
 	}
 
 	/**
@@ -48,48 +46,46 @@ class Reports extends Base
 		$approval_status = $this->input->get('approval_status', TRUE);
 		$date_created = $this->input->get('date_created', TRUE);
 		$date_created_range = $this->input->get('date_created_range', TRUE);
-		$date_delivered = $this->input->get('date_delivered', TRUE);
-		$date_delivered_range = $this->input->get('date_delivered_range', TRUE);
+		$date_approved = $this->input->get('date_approved', TRUE);
+		$date_approved_range = $this->input->get('date_approved_range', TRUE);
 		$agent = $this->input->get('agent_id', TRUE);
-		$beneficiary = $this->input->get('beneficiary_id', TRUE);
 		$order_id = $this->input->get('order_id', TRUE);
-		$donation_id = $this->input->get('donation_id', TRUE);
 		$client_id = $this->input->get('client_id', TRUE);
+		$location = $this->input->get('location_id', TRUE);
 		$date_created_from = null;
 		$date_created_to = null;
-		$date_delivered_from = null;
-		$date_delivered_to = null;
+		$date_approved_from = null;
+		$date_approved_to = null;
 		if (!empty($date_created_range)) {
 			$separate_dates = $this->splitDateRange($date_created_range);
 			$date_created_from = $separate_dates[0];
 			$date_created_to = $separate_dates[1];
 		}
-		if (!empty($date_delivered_range)) {
-			$separate_dates = $this->splitDateRange($date_delivered_range);
-			$date_delivered_from = $separate_dates[0];
-			$date_delivered_to = $separate_dates[1];
+		if (!empty($date_approved_range)) {
+			$separate_dates = $this->splitDateRange($date_approved_range);
+			$date_approved_from = $separate_dates[0];
+			$date_approved_to = $separate_dates[1];
 		}
 		$data = array(
 			"approvalStatus" => $approval_status,
-			"dateCreated" => $date_created,
-			"dateDelivered" => $date_delivered,
-			"dateCreated >" => $date_created_from,
-			"dateCreated <" => $date_created_to,
-			"dateDelivered >" => $date_delivered_from,
-			"dateDelivered <" => $date_delivered_to,
+			"orders.dateCreated" => $date_created,
+			"orders.lastUpdated" => $date_approved,
+			"orders.dateCreated >=" => $date_created_from,
+			"orders.dateCreated <=" => $date_created_to,
+			"orders.lastUpdated >=" => $date_approved_from,
+			"orders.lastUpdated <=" => $date_approved_to,
 			"orders.orderId" => $order_id,
 			"orders_agents.agentId" => $agent,
-			"orders_beneficiaries.beneficiaryId" => $beneficiary,
-			"clientDonationId" => $donation_id,
 			"client_donations.clientId" => $client_id,
+			"locations.id" => $location,
 
 
 		);
 		/*fetch data from model*/
-		$result = $result = $this->reports->getOrders($data);
-		foreach ($result as $result){
-			$beneficiary_group_amounts =$this->reports->getBeneficiaryGroupAmounts($result["orderId"]);
-			$result["beneficiary_group_amounts"] = $beneficiary_group_amounts;
+		$result = $this->reports->getOrders($data);
+		foreach ($result as $result_){
+			$beneficiary_group_amounts =$this->reports->getBeneficiaryGroupAmounts($result_->orderId);
+			$result_->beneficiary_group_amounts = $beneficiary_group_amounts;
 		}
 		$this->response([
 			"result" => $result
@@ -115,11 +111,11 @@ class Reports extends Base
 			$date_registered_to = $separate_dates[1];
 		}
 		$data = array(
-			"beneficiaryId" => $beneficiary_id,
+			"beneficiary.beneficiaryId" => $beneficiary_id,
 			"gender" => $gender,
-			"dateRegistered" => $date_registered,
-			"dateRegistered>" => $date_registered_from,
-			"dateRegistered<" => $date_registered_to,
+			"beneficiary.dateRegistered" => $date_registered,
+			"beneficiary.dateRegistered>" => $date_registered_from,
+			"beneficiary.dateRegistered<" => $date_registered_to,
 			"beneficiary_location.locationId" => $location_id,
 
 		);
@@ -132,7 +128,44 @@ class Reports extends Base
 			"result" => $result
 		], REST_Controller::HTTP_OK);
 	}
+/**
+	 *
+	 */
+	public function kin_get()
+	{
+		/*get attributes*/
+		$kin_id = $this->input->get('kin_id', TRUE);
+		$beneficiary_id = $this->input->get('beneficiary_id', TRUE);
+		$gender = $this->input->get('gender', TRUE);
+		$location_id = $this->input->get('location_id', TRUE);
+		$date_registered = $this->input->get('date_registered', TRUE);
+		$date_registered_range = $this->input->get('date_registered_range', TRUE);
+		$date_registered_from = null;
+		$date_registered_to = null;
+		if (!empty($date_registered_range)) {
+			$separate_dates = $this->splitDateRange($date_registered_range);
+			$date_registered_from = $separate_dates[0];
+			$date_registered_to = $separate_dates[1];
+		}
+		$data = array(
+			"kinId" => $kin_id,
+			"kin.beneficiaryId" => $beneficiary_id,
+			"gender" => $gender,
+			"dateRegistered" => $date_registered,
+			"dateRegistered>" => $date_registered_from,
+			"dateRegistered<" => $date_registered_to,
+			"kin_locations.locationId" => $location_id,
 
+		);
+
+		/*fetch data from model
+		*/
+		/*fetch data from model*/
+		$result = $result = $this->reports->getKin($data);
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
 	/**
 	 *
 	 */
@@ -152,7 +185,7 @@ class Reports extends Base
 			$date_registered_to = $separate_dates[1];
 		}
 		$data = array(
-			"staff_id" => $staff_id,
+			"staffId" => $staff_id,
 			"gender" => $gender,
 			"identificationNumber" => $identification_number,
 			"dateCreated" => $date_created,
@@ -253,9 +286,9 @@ class Reports extends Base
 			"agentId" => $agent_id,
 			"gender" => $gender,
 			"identificationNumber" => $identification_number,
-			"dateCreated" => $date_created,
-			"dateCreated>" => $date_registered_from,
-			"dateCreated<" => $date_registered_to,
+			"agents.dateCreated" => $date_created,
+			"agents.dateCreated>" => $date_registered_from,
+			"agents.dateCreated<" => $date_registered_to,
 		);
 
 		/*fetch data from model
@@ -398,7 +431,168 @@ class Reports extends Base
 	public function beneficiaryGroups_get()
 	{
 		# code...
-		$result = $result = $this->reports->getBeneficiaryGroups();
+		$result  = $this->reports->getBeneficiaryGroups();
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function transactions_get(){
+		$date = $this->input->get('date', TRUE);
+		$date_range = $this->input->get('date_range', TRUE);
+		$agent_id = $this->input->get('agent_id', TRUE);
+		$beneficiary_id = $this->input->get('beneficiary_id', TRUE);
+		$order_id = $this->input->get('order_id', TRUE);
+		$client_id = $this->input->get('client_id', TRUE);
+		$date_to = null;
+		$date_from = null;
+		if (!empty($date_range)) {
+			$separate_dates = $this->splitDateRange($date_range);
+			$date_from = $separate_dates[0];
+			$date_to = $separate_dates[1];
+		}
+		$data = array(
+			"time_of_transaction" => $date,
+			"time_of_transaction >=" => $date_from,
+			"time_of_transaction <=" => $date_to,
+			"t.agent_id" => $agent_id,
+			"t.beneficiary_id" => $beneficiary_id,
+			"t.order_id" => $order_id,
+			"client_donations.clientId" => $client_id,
+		);
+		$result = $this->reports->getTransactions($data);
+		$location_name = null;
+		foreach ($result as $item) {
+			/*Get City, Town From Latitude and Longitude*/
+				$geolocation = $item->latitude . ',' . $item->longitude;
+				$request = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $geolocation . '&sensor=false&key=AIzaSyCYj7_3RpBL7ozF-WIk_piDxo-BSFOt1rM';
+				$file_contents = file_get_contents($request);
+				$json_decode = json_decode($file_contents);
+				if (isset($json_decode->results[0])) {
+					$response = array();
+					foreach ($json_decode->results[0]->address_components as $addressComponet) {
+						if (in_array('political', $addressComponet->types)) {
+							$response[] = $addressComponet->long_name;
+						}
+					}
+
+					if (isset($response[0])) {
+						$first = $response[0];
+					} else {
+						$first = 'null';
+					}
+					if (isset($response[1])) {
+						$second = $response[1];
+					} else {
+						$second = 'null';
+					}
+					if (isset($response[2])) {
+						$third = $response[2];
+					} else {
+						$third = 'null';
+					}
+					if (isset($response[3])) {
+						$fourth = $response[3];
+					} else {
+						$fourth = 'null';
+					}
+					if (isset($response[4])) {
+						$fifth = $response[4];
+					} else {
+						$fifth = 'null';
+					}
+
+
+					if ($first != 'null' && $second != 'null' && $third != 'null' && $fourth != 'null' && $fifth != 'null') {
+						$location_name = $first .' ,'.$second.' ,'.$third.' ,'.$fourth.' ,'.$fifth;
+					} else if ($first != 'null' && $second != 'null' && $third != 'null' && $fourth != 'null' && $fifth == 'null') {
+						$location_name = $first .' ,'.$second.' ,'.$third.' ,'.$fourth;
+					} else if ($first != 'null' && $second != 'null' && $third != 'null' && $fourth == 'null' && $fifth == 'null') {
+						$location_name = $first .' ,'.$second.' ,'.$third;
+					} else if ($first != 'null' && $second != 'null' && $third == 'null' && $fourth == 'null' && $fifth == 'null') {
+						$location_name = $first .' ,'.$second;
+					} else if ($first != 'null' && $second == 'null' && $third == 'null' && $fourth == 'null' && $fifth == 'null') {
+						$location_name = $first .'';
+					}
+				}
+
+			$item->locationDelivered = $location_name;
+		}
+
+		$this->response([
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+
+	public function transactionsGraph_get(){
+
+		$dat = date('Y-m-d');
+		$date = new DateTime($dat);
+		$client_id = $this->input->get('client_id', TRUE);
+
+		$result['transactions'] = array();
+
+
+		$period = $date->modify("-11 months");
+		for ($i = 0; $i < 12; $i++) {
+			$instance_month = $period->format("Y-m");
+			$data = array(
+				"client_donations.clientId" => $client_id,
+				"time_of_transaction"=>$instance_month
+
+			);
+
+			array_push($result['transactions'], $this->reports->getTransactionForGraph($data));
+			$period = $date->modify("+1 months");
+
+		}
+
+		$this->response([
+			"status" => "true",
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function allusers_get(){
+		$result = $this->reports->getAllUsers();
+		$this->response([
+			"status" => "true",
+			"result" => $result
+		], REST_Controller::HTTP_OK);
+	}
+	public function beneficiariesList_get(){
+		$agent_id = $this->input->get('agent_id', TRUE);
+		$order_id = $this->input->get('order_id', TRUE);
+		$agent = $this->reports->getAgents($data=array("agentId"=>$agent_id));
+		$data=array(
+			"orders_beneficiaries_agents.agentId"=>$agent_id,
+			"orders_beneficiaries_agents.orderId"=>$order_id,
+		);
+		$beneficiaries = $this->reports->getBenList($data);
+		if(isset($beneficiaries[0])){
+			$firstAlphabet =substr($beneficiaries[0]["beneficiaryName"],0,1);
+			$lastAlphabet=substr($beneficiaries[sizeof($beneficiaries)-1]["beneficiaryName"],0,1);
+		}else{
+			$firstAlphabet = "not set";
+			$lastAlphabet = "not set";
+		}
+		$this->response([
+			"status" => "true",
+			"agentName" => $agent[0]["name"],
+			"firstAlphabet"=>$firstAlphabet,
+			"lastAlphabet"=>$lastAlphabet,
+			"beneficiaries"=>$beneficiaries
+		], REST_Controller::HTTP_OK);
+	}
+
+	public function beneficiariesListForVerification_get(){
+		$agent_id = $this->input->get('agent_id', TRUE);
+		$order_id = $this->input->get('order_id', TRUE);
+		$data=array(
+			"orders_beneficiaries_agents.agentId"=>$agent_id,
+			"orders_beneficiaries_agents.orderId"=>$order_id,
+		);
+
+
+		$result = $result = $this->reports->getBenListForVerification($data);
 		$this->response([
 			"result" => $result
 		], REST_Controller::HTTP_OK);
