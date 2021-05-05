@@ -21,13 +21,13 @@ class Auth extends Base
 
 		$login_details = $this->auth->auth($username,$password);
 		if($login_details == false){
-			$this->createTrail("login",$username,"success");
+			$this->createTrail("login",$username,"Fail");
 			$this->response([
 				"status" => "false",
 				"message" => "invalid username or password"
 			], REST_Controller::HTTP_OK);
 		}else{
-			$this->createTrail("login",$username,"fail");
+			$this->createTrail("login",$username,"Success");
 			$this->response([
 				"status" => "true",
 				"result" => $login_details

@@ -35,16 +35,16 @@ class Reports_model extends CI_Model
 	 */
 	public function getOrders($params)
 	{
-		$this->db->select("orders.orderId,beneficiary.beneficiaryId,beneficiary.beneficiaryName,amount,locationExpected,
-		locationDelivered,delivery_status.statusCode,orders.dateCreated
-		,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,agents.name as agentName, agents.agentId, 
+		$this->db->select("orders.orderId,client_donations.grantName,locations.id as locationId,locations.name as locationName,amount,
+		order_activation_status.id as statusCode,order_activation_status.description as activationStatus,
+		orders.dateCreated,orders.dateDispatched,orders.dateDelivered,orders.lastUpdated,
 		clients.name as clientName, clients.clientId as clientId");
 		$this->db->from("orders");
-		$this->db->join("delivery_status", "orders.deliveryStatusId = delivery_status.statusCode");
-		$this->db->join("orders_beneficiaries", "orders.orderId = orders_beneficiaries.orderId");
-		$this->db->join("beneficiary", "orders_beneficiaries.beneficiaryId = beneficiary.beneficiaryId");
-		$this->db->join("orders_agents", "orders_agents.orderId = orders.orderId", "LEFT OUTER");
-		$this->db->join("agents", "orders_agents.agentId = agents.agentId","LEFT OUTER");
+		$this->db->join("order_activation_status", "orders.approvalStatus = order_activation_status.id");
+		$this->db->join("orders_locations", "orders.orderId = orders_locations.orderId","LEFT OUTER");
+		$this->db->join("locations", "orders_locations.locationId = locations.id");
+	/*	$this->db->join("orders_beneficiaries_agents", "orders_beneficiaries_agents.orderId = orders.orderId", "LEFT OUTER");
+		$this->db->join("agents", "orders_beneficiaries_agents.agentId = agents.agentId","LEFT OUTER");*/
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
 		$this->db->join("clients", "client_donations.clientId = clients.clientId");
@@ -53,7 +53,7 @@ class Reports_model extends CI_Model
 				$this->db->where("$key", $value);
 			}
 		}
-		return $this->db->get()->result("array");
+		return $this->db->get()->result();
 	}
 
 	/**
@@ -62,10 +62,36 @@ class Reports_model extends CI_Model
 	 */
 	public function getBeneficiaries($params)
 	{
-		$this->db->select("beneficiaryId,beneficiaryName,locationAddress,gender,email,mobile,printId,
-		fsName as fingerPrintFileSystemName,dateTaken as fingerPrintDateCreated");
+		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,locations.name as locationAddress,gender,email,mobile,printId,
+		fsName as fingerPrintFileSystemName,beneficiary.locationId,locations.name
+		,dob,pictureName,national_id,beneficiaryGroupId,beneficiary_groups.name as groupName");
 		$this->db->from("beneficiary");
-		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT OUTER");
+		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT");
+		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
+		$this->db->join("beneficiary_groups","beneficiary.beneficiaryGroupId =beneficiary_groups.id","LEFT");
+		$this->db->join("beneficiary_location","beneficiary.beneficiaryId =beneficiary_location.beneficiaryId","LEFT");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}else if(strpos($key,"beneficiary_groups")){
+				$this->db->where("$key");
+			}
+		}
+		$this->db->order_by("beneficiaryName","ASC");
+		return $this->db->get()->result("array");
+	}
+	/**
+	 * @param $params
+	 * @return array|array[]|object|object[]
+	 */
+	public function getKin($params)
+	{
+		$this->db->select("kin.kinId,kin.beneficiaryId,kinName,locations.name as locationAddress,gender,mobile,kin.printId,relationship,
+		fsName as fingerPrintFileSystemName,kin.locationId
+		,dob,pictureName,identificationNo as national_id	");
+		$this->db->from("kin");
+		$this->db->join("fingerprints","fingerprints.printId =kin.printId","LEFT");
+		$this->db->join("locations","kin.locationId =locations.id","LEFT");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
 				$this->db->where("$key", $value);
@@ -81,7 +107,7 @@ class Reports_model extends CI_Model
 	public function getStaff($params){
 		$this->db->select("email,name,userName,mobile,addressLocation,gender,state_identification_type.description as idType,
 		identificationNumber,responsibilities,staff.dateCreated 
-		as dateRegistered, lastModified");
+		as dateRegistered, lastModified,users.groupCode");
 		$this->db->from("staff");
 		$this->db->join("users","users.userId = staff.userId");
 		$this->db->join("state_identification_type","staff.stateIdentificationType = state_identification_type.id");
@@ -104,7 +130,12 @@ class Reports_model extends CI_Model
 		$this->db->join("user_groups","users.groupCode = user_groups.groupCode");
 		foreach ($params as $key => $value) {
 			if ($value != null) {
+				if($key == "action"){
+					
+					$this->db->like("$key", $value);
+				}else{
 				$this->db->where("$key", $value);
+				}
 			}
 		}
 		return $this->db->get()->result("array");
@@ -134,7 +165,7 @@ class Reports_model extends CI_Model
 	public function getAgents($params){
 		$this->db->select("agentid,name,username,email,mobile,addressLocation,gender,identificationNumber,
 		state_identification_type.description as idType,agents.dateCreated 
-		as dateRegistered, dateModified,addressLocation,gender");
+		as dateRegistered, dateModified,addressLocation,gender,users.username,users.passCode,users.groupCode");
 		$this->db->from("agents");
 		$this->db->join("users","users.userId = agents.userId");
 		$this->db->join("state_identification_type","agents.stateIdentificationType = state_identification_type.id");
@@ -153,8 +184,7 @@ class Reports_model extends CI_Model
 	 */
 	public function getAdmins($params){
 		$this->db->select("adminId, name,username,email,mobile,addressLocation,gender,identificationNumber,state_identification_type.description as idType,
-		dateCreated 
-		as dateRegistered, dateModified,addressLocation,gender");
+		administrators.dateCreated	as dateRegistered, dateModified,addressLocation,gender,users.groupCode");
 		$this->db->from("administrators");
 		$this->db->join("users","users.userId = administrators.userId");
 		$this->db->join("state_identification_type","administrators.stateIdentificationType = state_identification_type.id");
@@ -201,8 +231,8 @@ class Reports_model extends CI_Model
 	public function orderComparison(array $data,$type,$instance_month)
 	{
 
-		$this->db->select("count(orders.orderId) as count");
-		$this->db->from("orders");
+		$this->db->select("count(transactions.id) as count");
+		$this->db->from("transactions");
 		$this->db->join("orders_donations", "orders.orderId = orders_donations.orderId");
 		$this->db->join("client_donations", "client_donations.id = orders_donations.clientDonationId");
 
@@ -212,7 +242,7 @@ class Reports_model extends CI_Model
 
 		}elseif ($type=="undelivered"){
 			$this->db->where("deliveryStatusId",2);
-			$this->db->like("dateCreated", $instance_month);
+			$this->db->like("orders.dateCreated", $instance_month);
 		}
 		foreach ($data as $key => $value) {
 			if ($value != null) {
@@ -223,6 +253,141 @@ class Reports_model extends CI_Model
 		$result = $this->db->get()->row();
 		return $result->count;
 
+	}
+
+	public function getStates(array $data)
+	{
+		$this->db->select("*");
+		$this->db->from("states");
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		$result = $this->db->get()->result();
+		return $result;
+	}
+
+	public function getLocations(array $data)
+	{
+		$this->db->select("locations.*,states.name as state_name");
+		$this->db->from("locations");
+		$this->db->join("states","locations.stateId = states.id");
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		$result = $this->db->get()->result();
+		return $result;
+	}
+	public function getBeneficiaryGroups(){
+		$this->db->select("*");
+		$this->db->from("beneficiary_groups");
+		$result = $this->db->get()->result();
+		return $result;
+
+	}
+
+	public function getBeneficiaryGroupAmounts($orderId)
+	{
+		$this->db->select("beneficiary_group_amounts.beneficiary_group_id as ben_group_id,name,amount");
+		$this->db->from("beneficiary_group_amounts");
+		$this->db->join("beneficiary_groups","beneficiary_group_id = beneficiary_groups.id");
+		$this->db->where("order_id",$orderId);
+		$result = $this->db->get()->result();
+		return $result;
+	}
+
+	public function getTransactions($data){
+		$this->db->select("t.id as transaction_id,t.beneficiary_id,t.order_id,t.agent_id,b.beneficiaryName as beneficiary_name,
+		client_donations.grantName as grant_name,t.verified_person,t.kin_id,
+		t.amount,t.time_of_transaction,agents.name as agent_name,t.longitude,t.latitude,locations.name as locationExpected");
+		$this->db->from("transactions t");
+		$this->db->join("beneficiary b","b.beneficiaryId = t.beneficiary_id");
+		$this->db->join("agents","agents.agentId = t.agent_id","LEFT OUTER");
+		$this->db->join("orders","orders.orderId = t.order_id");
+		$this->db->join("orders_donations","orders.orderId = orders_donations.orderId");
+		$this->db->join("client_donations","orders_donations.clientDonationId = client_donations.id");
+		$this->db->join("orders_locations","orders.orderId = orders_locations.orderId");
+		$this->db->join("locations","orders_locations.locationId = locations.id");
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+					$this->db->where("$key", "$value");
+			}
+		}
+		//print_r($result);
+		return $this->db->get()->result();
+	}
+	public function getTransactionForGraph($data){
+		$this->db->select("count(t.id) as count");
+		$this->db->from("transactions t");
+		$this->db->join("beneficiary b","b.beneficiaryId = t.beneficiary_id");
+		$this->db->join("agents","agents.agentId = t.agent_id","LEFT OUTER");
+		$this->db->join("orders","orders.orderId = t.order_id");
+		$this->db->join("orders_donations","orders.orderId = orders_donations.orderId");
+		$this->db->join("client_donations","orders_donations.clientDonationId = client_donations.id");
+
+
+		foreach ($data as $key => $value) {
+			if ($value != null) {
+				if($key == "time_of_transaction"){
+					$this->db->like("$key", $value);
+				}else {
+					$this->db->where("$key", $value);
+				}
+			}
+		}
+		$result = $this->db->get()->row();
+		return $result->count;
+	}
+
+	public function getAllUsers()
+	{
+		$query = $this->db->query("Select agentId as id, name,email,mobile,addressLocation, gender,stateIdentificationType as idType,identificationNumber, groupCode,
+		dateCreated from agents union all Select adminId as id, name,email,mobile,addressLocation, gender,stateIdentificationType   as idType ,identificationNumber,groupCode,
+		dateCreated from administrators union all Select staffId as id, name,email,mobile,addressLocation, gender,stateIdentificationType   as idType,identificationNumber, groupCode,
+		dateCreated from staff");
+		//$result = $query->result();
+		return $query->result();
+	}
+
+	public function getBenList(array $params)
+	{
+		$this->db->select("beneficiaryName,locations.name as locationAddress,gender,mobile,beneficiary.locationId,
+		,national_id,beneficiary_groups.name as groupName");
+		$this->db->from("orders_beneficiaries_agents");
+		$this->db->join("beneficiary","orders_beneficiaries_agents.beneficiaryId =beneficiary.beneficiaryId","LEFT");
+		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
+		$this->db->join("beneficiary_groups","beneficiary.beneficiaryGroupId =beneficiary_groups.id","LEFT");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}else{
+				$this->db->where("$key");
+			}
+		}
+		$this->db->order_by("beneficiaryName","ASC");
+		return $this->db->get()->result("array");
+	}
+	function getBenListForVerification($params){
+
+		$this->db->select("beneficiary.beneficiaryId,beneficiaryName,locations.name as locationAddress,gender,email,mobile,printId,
+		fsName as fingerPrintFileSystemName,beneficiary.locationId,locations.name
+		,dob,pictureName,national_id,beneficiaryGroupId,beneficiary_groups.name as groupName");
+		$this->db->from("orders_beneficiaries_agents");
+		$this->db->join("beneficiary","orders_beneficiaries_agents.beneficiaryId =beneficiary.beneficiaryId","LEFT");
+		$this->db->join("fingerprints","fingerprints.printId =beneficiary.fingerPrintId","LEFT");
+		$this->db->join("locations","beneficiary.locationId =locations.id","LEFT");
+		$this->db->join("beneficiary_groups","beneficiary.beneficiaryGroupId =beneficiary_groups.id","LEFT");
+		foreach ($params as $key => $value) {
+			if ($value != null) {
+				$this->db->where("$key", $value);
+			}
+		}
+		$this->db->order_by("beneficiaryName","ASC");
+		$this->db->group_by("beneficiary.beneficiaryId");
+		return $this->db->get()->result("array");
 	}
 
 

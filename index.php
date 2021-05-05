@@ -229,6 +229,8 @@ switch (ENVIRONMENT)
 	// Path to the system directory
 	define('BASEPATH', $system_path);
 
+// Path to the assets directory
+define('ASSETS', "assets");
 	// Path to the front controller (this file) directory
 	define('FCPATH', dirname(__FILE__).DIRECTORY_SEPARATOR);
 
